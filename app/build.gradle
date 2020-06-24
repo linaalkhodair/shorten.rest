@@ -30,5 +30,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
+    implementation("com.google.guava:guava:29.0-android")
+
 
 }
