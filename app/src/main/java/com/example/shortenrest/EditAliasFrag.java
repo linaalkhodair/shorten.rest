@@ -15,9 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
@@ -30,6 +32,7 @@ import java.util.Objects;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -92,6 +95,7 @@ public class EditAliasFrag extends Fragment {
         domainEdit.setVisibility(View.INVISIBLE);
         saveBtn.setVisibility(View.INVISIBLE);
 
+
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,14 +104,56 @@ public class EditAliasFrag extends Fragment {
                     String aliasName = getAliasName(shortURL.getText().toString());
 
                     getAlias(aliasName);
+
                 }
+            }
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //validate not empty dest and domain
+                String aliasName = getAliasName(shortURL.getText().toString());
+                String destUrl = destURL.getText().toString();
+
+                if(isValid(destUrl)){
+                    editShortURL(aliasName, destUrl);
+                    Toast.makeText(mContext, "Short URL has been updated successfully", Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
 
     } //end onViewCreated
 
+    private boolean isValid(String url){
 
-    public boolean validate(){
+        boolean isValid = false;
+
+
+        //ensure field is not empty
+        if (url.isEmpty() || domainEdit.getText().toString().isEmpty()) {
+
+            createDialog("Missing field, please fill in all fields and try again.");
+            return isValid;
+        }
+
+        //ensure a valid URL
+        // Patterns.WEB_URL.matcher(url).matches();
+        if(! URLUtil.isValidUrl(url)){
+            createDialog("Invalid URL format, please enter a valid URL and try again.");
+            return isValid;
+        }
+
+
+        isValid = true;
+        return isValid;
+
+    }
+
+    private boolean validate(){
 
         String url = shortURL.getText().toString();
 
@@ -129,7 +175,7 @@ public class EditAliasFrag extends Fragment {
     }
 
 
-    public String getAliasName(String shortURL){
+    private String getAliasName(String shortURL){
 
         shortURL.replace("https://","");
         Log.d("test1", "short: "+ shortURL);
@@ -144,7 +190,7 @@ public class EditAliasFrag extends Fragment {
     }
 
 
-    public void getAlias(String aliasName){
+    private void getAlias(String aliasName){
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
@@ -162,13 +208,6 @@ public class EditAliasFrag extends Fragment {
             String json = response.body().string();
             Log.d("json","json:"+json);
             JSONObject jsonObj = new JSONObject(json);
-
-            if (jsonObj.getString("name").isEmpty()) {
-                createDialog("Alias is not found, please enter a valid alias and try again.");
-            }
-
-            else {
-
 
                 //displaying domain
                 String domainName = jsonObj.getString("domainName");
@@ -188,8 +227,8 @@ public class EditAliasFrag extends Fragment {
                 destTV.setVisibility(View.VISIBLE);
                 destURL.setVisibility(View.VISIBLE);
                 destURL.setText(destinatonUrl);
+                saveBtn.setVisibility(View.VISIBLE);
 
-            } //end else
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -206,7 +245,25 @@ public class EditAliasFrag extends Fragment {
     } //end getAlias
 
 
-    public void editShortURL(){
+    private void editShortURL(String aliasName, String destUrl){
+
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
+        Request request = new Request.Builder()
+                .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
+                .method("PUT", body)
+                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+
+            Log.d("TEST101","response is :"+response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

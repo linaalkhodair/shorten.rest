@@ -2,6 +2,8 @@ package com.example.shortenrest;
 
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,7 +21,9 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +43,7 @@ public class CreateAliasFrag extends Fragment {
     EditText longURL;
     EditText shortURL;
     Button shortenBtn;
+    ImageView copyIcon;
 
     Button okBtn,cancelBtn;
     TextView dialogMsg;
@@ -81,6 +86,19 @@ public class CreateAliasFrag extends Fragment {
         longURL = view.findViewById(R.id.longURL);
         shortURL = view.findViewById(R.id.shortURL);
         shortenBtn = view.findViewById(R.id.shortenBtn);
+        copyIcon = view.findViewById(R.id.copyIcon);
+
+        copyIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("shortUrl", shortURL.getText().toString());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(mContext, "URL has been copied to clipboard.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
 
         shortenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +106,9 @@ public class CreateAliasFrag extends Fragment {
 
             if (isValid()) {
                 createAlias();
-             }
+                Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
+
+            }
             }
         });
 
