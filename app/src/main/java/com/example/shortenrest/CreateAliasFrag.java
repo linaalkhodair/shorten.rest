@@ -1,6 +1,10 @@
 package com.example.shortenrest;
 
 
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,8 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +39,16 @@ public class CreateAliasFrag extends Fragment {
     EditText longURL;
     EditText shortURL;
     Button shortenBtn;
+
+    Button okBtn,cancelBtn;
+    TextView dialogMsg;
+
+    private Context mContext;
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
 
     public CreateAliasFrag() {
         // Required empty public constructor
@@ -70,14 +86,41 @@ public class CreateAliasFrag extends Fragment {
             @Override
             public void onClick(View v) {
 
-            createAlias();
-
+            if (isValid()) {
+                createAlias();
+             }
             }
         });
 
     } //end onViewCreated()
 
-    public void createAlias() {
+
+    private boolean isValid(){
+
+        boolean isValid = false;
+        String url = longURL.getText().toString();
+
+        //ensure field is not empty
+        if (url.isEmpty()) {
+
+            createDialog("Missing Destination URL field, please fill in field and try again.");
+            return isValid;
+        }
+
+        //ensure a valid URL
+        // Patterns.WEB_URL.matcher(url).matches();
+        if(! URLUtil.isValidUrl(url)){
+            createDialog("Invalid URL format, please enter a valid URL and try again.");
+            return isValid;
+        }
+
+
+        isValid = true;
+        return isValid;
+
+    }
+
+    private void createAlias() {
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
@@ -107,4 +150,30 @@ public class CreateAliasFrag extends Fragment {
         }
 
     } //end createAlias
+
+    private void createDialog(String message){
+        final Dialog dialog = new Dialog(mContext);
+        dialog.setContentView(R.layout.alert_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        okBtn=dialog.findViewById(R.id.ok_btn_alert_dialog);
+        //  cancelBtn=dialog.findViewById(R.id.cancel_btn_dialog);
+        dialogMsg=dialog.findViewById(R.id.dialog_message);
+
+
+        dialogMsg.setText(message);
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View view) {
+                                         dialog.cancel();
+                                     }//end of onClick
+                                 }//end of OnClickListener
+        );
+
+
+
+        dialog.show();
+
+    }//end of createDialog
 }
