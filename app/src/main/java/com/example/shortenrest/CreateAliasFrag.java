@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,9 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,17 +42,24 @@ import okhttp3.Response;
 
 
 
-public class CreateAliasFrag extends Fragment {
+public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelectedListener{
 
     EditText longURL;
     EditText shortURL;
     Button shortenBtn;
     ImageView copyIcon;
+    Spinner spinner;
+    String snippetID;
 
-    Button okBtn,cancelBtn;
+    Button okBtn;
     TextView dialogMsg;
 
+    EditText snippetExample;
+    ImageView addSnippet;
+
     private Context mContext;
+
+    SnippetList snippetList;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -74,10 +85,10 @@ public class CreateAliasFrag extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
+        if (Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
@@ -87,6 +98,43 @@ public class CreateAliasFrag extends Fragment {
         shortURL = view.findViewById(R.id.shortURL);
         shortenBtn = view.findViewById(R.id.shortenBtn);
         copyIcon = view.findViewById(R.id.copyIcon);
+
+        snippetExample = view.findViewById(R.id.snippetExample);
+        addSnippet = view.findViewById(R.id.addSnippet);
+
+
+        //creating dropdown menu
+        spinner = view.findViewById(R.id.spinner);
+        String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
+        spinner.setSelection(1);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                snippetID = parent.getItemAtPosition(position).toString();
+                Log.d("testLOL",snippetID);
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+
+        addSnippet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snippetList = new SnippetList(snippetID, "");
+                Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
+                snippetExample.setVisibility(View.VISIBLE);
+                snippetExample.setHint(snippetList.getParameterExample(snippetID));
+            }
+        });
+
+
 
         copyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,12 +156,35 @@ public class CreateAliasFrag extends Fragment {
                 createAlias();
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
-            }
+                }
             }
         });
 
     } //end onViewCreated()
 
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        switch (position){
+            case 1:
+                snippetID = "NA";
+                break;
+            default:
+                snippetID = parent.getItemAtPosition(position).toString();
+                break;
+        }
+
+        Log.d("testDEDD","snippet:"+snippetID);
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 
     private boolean isValid(){
 
@@ -146,7 +217,7 @@ public class CreateAliasFrag extends Fragment {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}]}");
         Request request = new Request.Builder()
-                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //change dcc
+                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
                 .method("POST", body)
                 .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
                 .addHeader("Content-Type", "application/json")
