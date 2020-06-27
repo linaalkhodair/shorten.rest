@@ -167,16 +167,16 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        switch (position){
-            case 1:
-                snippetID = "NA";
-                break;
-            default:
-                snippetID = parent.getItemAtPosition(position).toString();
-                break;
-        }
-
-        Log.d("testDEDD","snippet:"+snippetID);
+//        switch (position){
+//            case 1:
+//                snippetID = "NA";
+//                break;
+//            default:
+//                snippetID = parent.getItemAtPosition(position).toString();
+//                break;
+//        }
+//
+//        Log.d("testDEDD","snippet:"+snippetID);
 
 
     }
