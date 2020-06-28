@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,8 +56,11 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     TextView dialogMsg;
 
     EditText snippetExample;
-    ImageView addSnippet;
+    ImageView addSnippet, addIcon, removeIcon;
 
+    RelativeLayout relativeLayout;
+
+    boolean isSnippet;
     private Context mContext;
 
     SnippetList snippetList;
@@ -99,6 +103,10 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         shortenBtn = view.findViewById(R.id.shortenBtn);
         copyIcon = view.findViewById(R.id.copyIcon);
 
+        addIcon = view.findViewById(R.id.addIcon);
+        removeIcon = view.findViewById(R.id.removeIcon);
+        relativeLayout = view.findViewById(R.id.relativeLayout);
+
         snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
 
@@ -130,7 +138,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
                 snippetList = new SnippetList(snippetID, "");
                 Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
                 snippetExample.setVisibility(View.VISIBLE);
-                snippetExample.setHint(snippetList.getParameterExample(snippetID));
+                snippetExample.setText(snippetList.getParameterExample(snippetID));
+                isSnippet = true;
             }
         });
 
@@ -153,10 +162,35 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View v) {
 
             if (isValid()) {
-                createAlias();
+                if (isSnippet) {
+                    createAliasSnippet();
+                } else {
+                    createAlias();
+                }
+
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
                 }
+            }
+        });
+
+
+        addIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addIcon.setVisibility(View.INVISIBLE);
+                removeIcon.setVisibility(View.VISIBLE);
+                relativeLayout.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        removeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeIcon.setVisibility(View.INVISIBLE);
+                addIcon.setVisibility(View.VISIBLE);
+                relativeLayout.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -166,18 +200,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-//        switch (position){
-//            case 1:
-//                snippetID = "NA";
-//                break;
-//            default:
-//                snippetID = parent.getItemAtPosition(position).toString();
-//                break;
-//        }
-//
-//        Log.d("testDEDD","snippet:"+snippetID);
-
 
     }
 
@@ -241,6 +263,44 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         }
 
     } //end createAlias
+
+
+    public void createAliasSnippet(){
+
+        String parameters = snippetExample.getText().toString();
+        if (parameters.equals("NA")) {
+            parameters = "";
+        }
+        parameters = parameters.replaceAll("\n","");
+
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
+        Request request = new Request.Builder()
+                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
+                .method("POST", body)
+                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            String json = response.body().string();
+
+            Log.d("jsonSN","json:"+json);
+            Log.d("HERE(SN)","response is :"+response);
+
+            JSONObject jsonObj = new JSONObject(json);
+            String shortened = jsonObj.getString("shortUrl");
+            Log.d("shorturl(SN)","="+shortened);
+            shortURL.setText(shortened);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);

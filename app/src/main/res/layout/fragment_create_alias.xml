@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="730dp"
+        android:layout_height="730sp"
         android:layout_alignParentBottom="true"
         >
 
@@ -102,17 +102,51 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginTop="360dp"
-            android:text="Tracking Pixels"
+            android:text="Set UTM and snippets"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
+        <ImageView
+            android:id="@+id/addIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="340dp"
+            android:layout_marginTop="360sp"
+            android:src="@drawable/ic_add_black_24dp" />
+
+        <ImageView
+            android:id="@+id/removeIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="340dp"
+            android:visibility="invisible"
+            android:layout_marginTop="360sp"
+            android:src="@drawable/ic_remove_black_24dp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout"
+            android:visibility="invisible"
+            >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="400dp"
+            android:text="Tracking Pixels:"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/infoIcon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginStart="180dp"
-            android:layout_marginTop="365dp"
+            android:layout_marginTop="400dp"
             android:src="@drawable/ic_info_outline_black_24dp" />
 
         <Spinner
@@ -120,7 +154,7 @@
             android:layout_width="300sp"
             android:layout_height="60sp"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="400dp"
+            android:layout_marginTop="440dp"
             android:backgroundTint="@color/colorPrimaryDark"
             android:spinnerMode="dropdown"
             android:textSize="16sp" />
@@ -130,7 +164,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="355dp"
-            android:layout_marginTop="414dp"
+            android:layout_marginTop="450dp"
             android:src="@drawable/ic_add_circle_outline_black_24dp" />
 
         <EditText
@@ -138,13 +172,16 @@
             android:layout_width="370sp"
             android:layout_height="160dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="470sp"
+            android:layout_marginTop="515sp"
             android:ems="10"
-            android:gravity="left|top"
+            android:background="@drawable/round_shape"
             android:hint="Write your comment.."
+            android:padding="@dimen/padd_10"
             android:inputType="textMultiLine"
             android:textSize="15sp"
             android:visibility="invisible" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
