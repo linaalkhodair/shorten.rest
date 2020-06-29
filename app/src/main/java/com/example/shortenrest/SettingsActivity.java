@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +25,10 @@ public class SettingsActivity extends AppCompatActivity {
     EditText domain;
     Button saveBtn;
 
-    Button okBtn,cancelBtn;
-    TextView dialogMsg;
+    Button okBtn;
+    TextView dialogMsg, domainSet;
+
+    final Credentials credentials = new Credentials();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,12 @@ public class SettingsActivity extends AppCompatActivity {
         api = findViewById(R.id.apiKey);
         domain = findViewById(R.id.domain);
         saveBtn = findViewById(R.id.saveBtn);
+        domainSet = findViewById(R.id.domainSet);
 
         Toolbar toolbar=findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        final Credentials credentials = new Credentials();
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +129,8 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             SharedPreferences.Editor ed = pref.edit();
             ed.putBoolean("activity_executed", true);
+            domain.setVisibility(View.INVISIBLE);
+            domainSet.setText(credentials.getDomain());
             ed.commit();
         }
     }

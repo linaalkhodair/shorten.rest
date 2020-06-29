@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.StrictMode;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -61,6 +64,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     RelativeLayout relativeLayout;
 
     boolean isSnippet;
+
     private Context mContext;
 
     SnippetList snippetList;
@@ -193,6 +197,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
                 relativeLayout.setVisibility(View.INVISIBLE);
             }
         });
+
 
     } //end onViewCreated()
 
