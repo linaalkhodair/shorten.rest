@@ -7,6 +7,12 @@ public class ItemCard {
     private String equal;
 
 
+    public ItemCard() {
+
+        equal = "=";
+
+    }
+
     public ItemCard(String paramEdit, String valueEdit, String equal) {
         this.paramEdit = paramEdit;
         this.valueEdit = valueEdit;

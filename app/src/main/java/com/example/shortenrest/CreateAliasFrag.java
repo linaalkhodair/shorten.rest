@@ -59,7 +59,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     String snippetID;
 
     Button okBtn;
-    TextView dialogMsg;
+    TextView dialogMsg, addUtm;
 
     EditText snippetExample;
     ImageView addSnippet, addIcon, removeIcon;
@@ -72,6 +72,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     SnippetList snippetList;
 
+    ArrayList<ItemCard> exampleList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -120,7 +121,14 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
 
+        addUtm = view.findViewById(R.id.addUtm);
         buildRecyclerView(view);
+        addUtm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertItem();
+            }
+        });
 
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
@@ -216,18 +224,29 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     private void buildRecyclerView(View view){
 
         //for testing
-        ArrayList<ItemCard> exampleList = new ArrayList<>(); //change name
+        exampleList = new ArrayList<>(); //change name
         exampleList.add(new ItemCard("idk1", "haha", "="));
         exampleList.add(new ItemCard("idk1", "haha", "="));
         exampleList.add(new ItemCard("idk1", "haha", "="));
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(mContext);
         adapter = new Adapter(exampleList);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void insertItem(){
+
+        exampleList.add(new ItemCard());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void removeItem(int position){
+        exampleList.remove(position);
+
+
     }
 
     @Override
