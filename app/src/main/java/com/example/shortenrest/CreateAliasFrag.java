@@ -13,6 +13,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.StrictMode;
 import android.text.SpannableString;
@@ -37,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -68,6 +71,10 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     private Context mContext;
 
     SnippetList snippetList;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -101,7 +108,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             StrictMode.setThreadPolicy(policy);
         }
 
-
         longURL = view.findViewById(R.id.longURL);
         shortURL = view.findViewById(R.id.shortURL);
         shortenBtn = view.findViewById(R.id.shortenBtn);
@@ -114,40 +120,11 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
 
+        buildRecyclerView(view);
 
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
-        String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
-        spinner.setSelection(1);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
-        spinner.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                snippetID = parent.getItemAtPosition(position).toString();
-                Log.d("testLOL",snippetID);
-
-            } // to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
-
-        addSnippet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                snippetList = new SnippetList(snippetID, "");
-                Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
-                snippetExample.setVisibility(View.VISIBLE);
-                snippetExample.setText(snippetList.getParameterExample(snippetID));
-                isSnippet = true;
-            }
-        });
-
-
+        buildSnippetMenu();
 
         copyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,6 +179,56 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end onViewCreated()
 
 
+    private void buildSnippetMenu(){
+
+        String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
+        spinner.setSelection(1);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                snippetID = parent.getItemAtPosition(position).toString();
+                Log.d("testLOL",snippetID);
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+
+        addSnippet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snippetList = new SnippetList(snippetID, "");
+                Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
+                snippetExample.setVisibility(View.VISIBLE);
+                snippetExample.setText(snippetList.getParameterExample(snippetID));
+                isSnippet = true;
+            }
+        });
+
+    }
+
+    private void buildRecyclerView(View view){
+
+        //for testing
+        ArrayList<ItemCard> exampleList = new ArrayList<>(); //change name
+        exampleList.add(new ItemCard("idk1", "haha", "="));
+        exampleList.add(new ItemCard("idk1", "haha", "="));
+        exampleList.add(new ItemCard("idk1", "haha", "="));
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(mContext);
+        adapter = new Adapter(exampleList);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
