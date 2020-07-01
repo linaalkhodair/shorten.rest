@@ -1,5 +1,10 @@
 package com.example.shortenrest;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -16,6 +22,11 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
     private ArrayList<ItemCard>  mArrayList;
+
+
+    public ArrayList<ItemCard> getmArrayList() {
+        return mArrayList;
+    }
 
     public static class AdapterViewHolder extends RecyclerView.ViewHolder {
 
@@ -39,6 +50,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
     public Adapter(ArrayList<ItemCard> arrayList) {
         mArrayList = arrayList;
+
     }
 
     @NonNull
@@ -52,7 +64,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final AdapterViewHolder holder, final int position) {
         //passing values
-        ItemCard currentItem = mArrayList.get(position);
+        final ItemCard currentItem = mArrayList.get(position);
 
         holder.paramEdit.setText(currentItem.getParamEdit());
         holder.valueEdit.setText(currentItem.getValueEdit());
@@ -65,7 +77,50 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
             }
         });
+
+        Log.d("adapterTest","hi   "+holder.paramEdit.getText());
+
+        holder.paramEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                currentItem.setParamEdit(s.toString());
+                mArrayList.set(position, currentItem);
+
+            }
+        });
+
+        holder.valueEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                currentItem.setValueEdit(s.toString());
+                mArrayList.set(position, currentItem);
+            }
+        });
+
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -77,6 +132,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, mArrayList.size());
     }
+
+    public ArrayList<ItemCard> getArrayList(){
+        return mArrayList;
+    }
+
 }
 
 

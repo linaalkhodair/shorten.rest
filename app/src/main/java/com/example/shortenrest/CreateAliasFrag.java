@@ -49,7 +49,7 @@ import okhttp3.Response;
 
 
 
-public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelectedListener{
+public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelectedListener {
 
     EditText longURL;
     EditText shortURL;
@@ -65,6 +65,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     ImageView addSnippet, addIcon, removeIcon;
 
     RelativeLayout relativeLayout;
+    ItemCard itemCard;
+    ArrayList<ItemCard> arrayList;
 
     boolean isSnippet;
 
@@ -98,6 +100,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_alias, container, false);
+
     }
 
     @Override
@@ -107,7 +110,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         if (Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-        }
+        } //network request purposes
 
         longURL = view.findViewById(R.id.longURL);
         shortURL = view.findViewById(R.id.shortURL);
@@ -122,11 +125,16 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         addSnippet = view.findViewById(R.id.addSnippet);
 
         addUtm = view.findViewById(R.id.addUtm);
+        SpannableString content = new SpannableString("Add UTM");
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        addUtm.setText(content);
+
         buildRecyclerView(view);
         addUtm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 insertItem();
+
             }
         });
 
@@ -160,6 +168,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
                 }
+                getUTMs();
             }
         });
 
@@ -225,9 +234,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
         //for testing
         exampleList = new ArrayList<>(); //change name
-        exampleList.add(new ItemCard("idk1", "haha", "="));
-        exampleList.add(new ItemCard("idk1", "haha", "="));
-        exampleList.add(new ItemCard("idk1", "haha", "="));
 
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(mContext);
@@ -235,9 +241,10 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
     }
 
-    private void insertItem(){
+    public void insertItem() {
 
         exampleList.add(new ItemCard());
         adapter.notifyDataSetChanged();
@@ -246,8 +253,9 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     private void removeItem(int position){
         exampleList.remove(position);
 
-
     }
+
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -378,4 +386,19 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         dialog.show();
 
     }//end of createDialog
+
+
+    private void getUTMs(){
+
+        int count = exampleList.size();
+
+         for (int i=0; i<count; i++){
+        ItemCard param = exampleList.get(i);
+        Log.d("TestGet","hi "+param.getParamEdit());
+
+       }
+
+    } //end getUTMs
+
+
 }

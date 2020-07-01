@@ -1,5 +1,7 @@
 package com.example.shortenrest;
 
+import android.os.Parcel;
+
 public class ItemCard {
 
     private String paramEdit;
@@ -23,6 +25,18 @@ public class ItemCard {
         return paramEdit;
     }
 
+    public void setParamEdit(String paramEdit) {
+        this.paramEdit = paramEdit;
+    }
+
+    public void setValueEdit(String valueEdit) {
+        this.valueEdit = valueEdit;
+    }
+
+    public void setEqual(String equal) {
+        this.equal = equal;
+    }
+
     public String getValueEdit() {
         return valueEdit;
     }
@@ -30,4 +44,5 @@ public class ItemCard {
     public String getEqual() {
         return equal;
     }
+
 }
