@@ -65,16 +65,15 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     ImageView addSnippet, addIcon, removeIcon;
 
     RelativeLayout relativeLayout;
-    ItemCard itemCard;
-    ArrayList<ItemCard> arrayList;
 
     boolean isSnippet;
+    boolean isUtm;
 
     private Context mContext;
 
     SnippetList snippetList;
 
-    ArrayList<ItemCard> exampleList;
+    ArrayList<ItemCard> arrayList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -168,7 +167,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
                 }
-                getUTMs();
+
+                //getUTMs();
             }
         });
 
@@ -233,11 +233,11 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     private void buildRecyclerView(View view){
 
         //for testing
-        exampleList = new ArrayList<>(); //change name
+        arrayList = new ArrayList<>(); //change name
 
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(mContext);
-        adapter = new Adapter(exampleList);
+        adapter = new Adapter(arrayList);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -246,16 +246,9 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     public void insertItem() {
 
-        exampleList.add(new ItemCard());
+        arrayList.add(new ItemCard());
         adapter.notifyDataSetChanged();
     }
-
-    private void removeItem(int position){
-        exampleList.remove(position);
-
-    }
-
-
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -294,9 +287,17 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     private void createAlias() {
 
+        String destinationUrl = longURL.getText().toString();
+        String utmUrl = getUTMs();
+
+        if (isUtm){
+
+            destinationUrl = utmUrl;
+        }
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}]}");
+        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destinationUrl+"\", \"country\": null, \"os\": null}]}");
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
                 .method("POST", body)
@@ -388,15 +389,25 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     }//end of createDialog
 
 
-    private void getUTMs(){
+    private String getUTMs(){
 
-        int count = exampleList.size();
+        String url = longURL.getText().toString();
+        int count = arrayList.size();
+        if (count != 0 ){
+            isUtm = true;
+        }
 
-         for (int i=0; i<count; i++){
-        ItemCard param = exampleList.get(i);
-        Log.d("TestGet","hi "+param.getParamEdit());
+        for (int i=0; i<count; i++){
 
-       }
+        ItemCard itemCard = arrayList.get(i);
+        url = url+"?"+itemCard.getParamEdit()+"="+itemCard.getValueEdit();
+
+        Log.d("TestGet","hi "+itemCard.getParamEdit());
+
+       } //end for loop
+
+        Log.d("output","url is: "+url);
+        return url;
 
     } //end getUTMs
 
