@@ -25,6 +25,20 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/shortenBtn"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="270dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/round_shape_btn"
+            android:text="Shorten"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+
+            />
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,26 +96,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/shortenBtn"
-            android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="300dp"
-            android:background="@drawable/round_shape_btn"
-            android:text="Shorten"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp"
 
-            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="360dp"
+            android:layout_marginTop="300dp"
             android:text="Set UTM and snippets"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"
@@ -112,7 +113,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="340dp"
-            android:layout_marginTop="360sp"
+            android:layout_marginTop="300sp"
             android:src="@drawable/ic_add_black_24dp" />
 
         <ImageView
@@ -121,21 +122,21 @@
             android:layout_height="30dp"
             android:layout_marginStart="340dp"
             android:visibility="invisible"
-            android:layout_marginTop="360sp"
+            android:layout_marginTop="300sp"
             android:src="@drawable/ic_remove_black_24dp" />
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="400dp"
-                android:text="Tracking Pixels:"
+                android:layout_marginTop="340dp"
+                android:text="Tracking Pixels"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -145,7 +146,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="180dp"
-                android:layout_marginTop="400dp"
+                android:layout_marginTop="340dp"
                 android:src="@drawable/ic_info_outline_black_24dp" />
 
             <Spinner
@@ -153,7 +154,7 @@
                 android:layout_width="300sp"
                 android:layout_height="60sp"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="440dp"
+                android:layout_marginTop="380dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:spinnerMode="dropdown"
                 android:textSize="16sp" />
@@ -163,7 +164,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="355dp"
-                android:layout_marginTop="450dp"
+                android:layout_marginTop="390dp"
                 android:src="@drawable/ic_add_circle_outline_black_24dp" />
 
             <EditText
@@ -171,7 +172,7 @@
                 android:layout_width="370sp"
                 android:layout_height="160dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="515sp"
+                android:layout_marginTop="450sp"
                 android:background="@drawable/round_shape"
                 android:ems="10"
                 android:hint="Write your comment.."
@@ -184,7 +185,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="700dp"
+                android:layout_marginTop="640dp"
+                android:text="UTM"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="670dp"
                 android:id="@+id/addUtm"
                 android:text="Add UTM"
                 android:textColor="@color/colorAccent"
@@ -195,7 +206,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="730sp"
+                android:layout_marginTop="700dp"
                 android:padding="4dp"
                 android:scrollbars="vertical" />
 

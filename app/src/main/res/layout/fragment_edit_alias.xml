@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditAliasFrag">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="930dp">
+
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="930sp"
+        android:layout_alignParentBottom="true"
+        >
 
 
         <TextView
@@ -55,6 +60,7 @@
             android:textColor="@color/colorPrimary"
 
             />
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -136,7 +142,42 @@
 
             />
 
+        <EditText
+            android:id="@+id/snippetExample"
+            android:layout_width="370sp"
+            android:layout_height="160dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="500sp"
+            android:background="@drawable/round_shape"
+            android:ems="10"
+            android:hint="Write your comment.."
+            android:inputType="textMultiLine"
+            android:padding="@dimen/padd_10"
+            android:textSize="15sp"
+            android:visibility="visible" />
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="670dp"
+            android:id="@+id/addUtm"
+            android:text="Add UTM"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            />
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="700dp"
+            android:visibility="visible"
+            android:padding="4dp"
+            android:scrollbars="vertical" />
+
+            </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

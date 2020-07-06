@@ -192,7 +192,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-
+        EditText editText = new EditText(mContext);
     } //end onViewCreated()
 
 
@@ -244,7 +244,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     }
 
-    public void insertItem() {
+    private void insertItem() {
 
         arrayList.add(new ItemCard());
         adapter.notifyDataSetChanged();
@@ -397,10 +397,12 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             isUtm = true;
         }
 
+        url = url+"?";
+
         for (int i=0; i<count; i++){
 
         ItemCard itemCard = arrayList.get(i);
-        url = url+"?"+itemCard.getParamEdit()+"="+itemCard.getValueEdit();
+        url = url+itemCard.getParamEdit()+"="+itemCard.getValueEdit()+"&";
 
         Log.d("TestGet","hi "+itemCard.getParamEdit());
 

@@ -10,7 +10,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +28,16 @@ import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import okhttp3.MediaType;
@@ -41,11 +52,11 @@ import okhttp3.Response;
 public class EditAliasFrag extends Fragment {
 
     EditText destURL;
-    EditText domainEdit;
+    EditText domainEdit, snippetExample;
     EditText shortURL;
     Button searchBtn;
     Button saveBtn;
-    TextView domainTV, destTV;
+    TextView domainTV, destTV, addUtm;
 
     Credentials credentials = new Credentials();
     String domain = credentials.getDomain();
@@ -54,6 +65,11 @@ public class EditAliasFrag extends Fragment {
     Button okBtn,cancelBtn;
     TextView dialogMsg;
     private Context mContext;
+
+    ArrayList<ItemCard> arrayList;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -89,6 +105,14 @@ public class EditAliasFrag extends Fragment {
         saveBtn = view.findViewById(R.id.saveChngs);
         domainTV = view.findViewById(R.id.domainTextView);
         destTV = view.findViewById(R.id.destTextView);
+        snippetExample = view.findViewById(R.id.snippetExample);
+
+        addUtm = view.findViewById(R.id.addUtm);
+        SpannableString content = new SpannableString("Add UTM");
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        addUtm.setText(content);
+
+        buildRecyclerView(view);
 
 
         destURL.setVisibility(View.INVISIBLE);
@@ -127,6 +151,20 @@ public class EditAliasFrag extends Fragment {
         });
 
     } //end onViewCreated
+
+    private void buildRecyclerView(View view){
+
+        //for testing
+        arrayList = new ArrayList<>(); //change name
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        layoutManager = new LinearLayoutManager(mContext);
+        adapter = new Adapter(arrayList);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+    }
 
     private boolean isValid(String url){
 
@@ -177,7 +215,7 @@ public class EditAliasFrag extends Fragment {
 
     private String getAliasName(String shortURL){
 
-        shortURL.replace("https://","");
+        shortURL = shortURL.replace("https://","");
         Log.d("test1", "short: "+ shortURL);
 
         int domainLength = domain.length();
@@ -223,11 +261,17 @@ public class EditAliasFrag extends Fragment {
                 String destinatonUrl = object.getString("url");
                 Log.d("tesssst", "url:" + destinatonUrl);
 
+                getUtm(destinatonUrl);
 
-                destTV.setVisibility(View.VISIBLE);
-                destURL.setVisibility(View.VISIBLE);
-                destURL.setText(destinatonUrl);
-                saveBtn.setVisibility(View.VISIBLE);
+                 destTV.setVisibility(View.VISIBLE);
+                 destURL.setVisibility(View.VISIBLE);
+                 destURL.setText(destinatonUrl);
+                 saveBtn.setVisibility(View.VISIBLE);
+
+                //displaying snippets:
+                    JSONArray array = jsonObj.getJSONArray("snippets");
+                    getSnippet(array);
+
 
 
         } catch (IOException e) {
@@ -244,6 +288,78 @@ public class EditAliasFrag extends Fragment {
 
     } //end getAlias
 
+    public static Map<String, String> getQueryMap(String query) {
+        String[] params = query.split("&");
+        Map<String, String> map = new HashMap<>();
+
+        for (String param : params) {
+            String name = param.split("=")[0];
+            String value = param.split("=")[1];
+            map.put(name, value);
+        }
+        return map;
+    }
+
+    private void getUtm(String url){
+
+        boolean found = false;
+        int index = url.indexOf("?");
+
+        if (url.contains("?utm")) {
+
+            while (!found) {
+
+
+                char ch1 = url.charAt(index + 1);
+                char ch2 = 'u';
+                int dif = ch1 - ch2;
+                if (dif == 0) { //equal
+                    url = url.substring(index + 1);
+                    found = true;
+                    Map<String, String> map = getQueryMap(url);
+                    Log.d("map : ", " " + map.toString());
+
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        ItemCard itemCard = new ItemCard(entry.getKey(), entry.getValue(), "=");
+                        insertItem(itemCard);
+                    }
+
+                } else {
+                    index = url.indexOf("?",index);
+
+                }
+
+            }
+
+
+
+
+        }
+    }// end getUtm
+
+    private void insertItem(ItemCard itemCard) {
+
+        arrayList.add(itemCard);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void getSnippet(JSONArray array){
+
+        for (int i=0; i<array.length(); i++){
+
+            try {
+                JSONObject snippetJson = array.getJSONObject(i);
+
+                String analyticsType = snippetJson.getString("id");
+                String params = snippetJson.getJSONObject("parameters").toString();
+                snippetExample.setText(params);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     private void editShortURL(String aliasName, String destUrl){
 
