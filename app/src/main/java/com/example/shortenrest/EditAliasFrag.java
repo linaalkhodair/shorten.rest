@@ -57,16 +57,20 @@ public class EditAliasFrag extends Fragment {
     Button searchBtn;
     Button saveBtn;
     TextView domainTV, destTV, addUtm;
+    boolean isUtm;
+    int numOfUtm; //stores the number of originalUtms
 
     Credentials credentials = new Credentials();
     String domain = credentials.getDomain();
     String apiKey = credentials.getAPI_KEY();
 
-    Button okBtn,cancelBtn;
+    Button okBtn;
+    static String cleanUrl;
     TextView dialogMsg;
     private Context mContext;
+    String plainUrl;
 
-    ArrayList<ItemCard> arrayList;
+    static ArrayList<ItemCard> arrayList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -113,6 +117,13 @@ public class EditAliasFrag extends Fragment {
         addUtm.setText(content);
 
         buildRecyclerView(view);
+        addUtm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertItem();
+
+            }
+        });
 
 
         destURL.setVisibility(View.INVISIBLE);
@@ -142,7 +153,8 @@ public class EditAliasFrag extends Fragment {
                 String destUrl = destURL.getText().toString();
 
                 if(isValid(destUrl)){
-                    editShortURL(aliasName, destUrl);
+                    //editShortURL(aliasName, destUrl);
+                    editShortURL(aliasName, cleanUrl);
                     Toast.makeText(mContext, "Short URL has been updated successfully", Toast.LENGTH_SHORT).show();
 
                 }
@@ -235,7 +247,7 @@ public class EditAliasFrag extends Fragment {
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
                 .method("GET",null)
-                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //--TODO--later change take api from class
                 .addHeader("Content-Type", "application/json")
                 .build();
 
@@ -259,9 +271,12 @@ public class EditAliasFrag extends Fragment {
 
                 JSONObject object = jsonObj.getJSONArray("destinations").getJSONObject(0);
                 String destinatonUrl = object.getString("url");
+
+                cleanUrl = destinatonUrl;
+                getUtm(destinatonUrl);
+
                 Log.d("tesssst", "url:" + destinatonUrl);
 
-                getUtm(destinatonUrl);
 
                  destTV.setVisibility(View.VISIBLE);
                  destURL.setVisibility(View.VISIBLE);
@@ -288,7 +303,7 @@ public class EditAliasFrag extends Fragment {
 
     } //end getAlias
 
-    public static Map<String, String> getQueryMap(String query) {
+    private static Map<String, String> getQueryMap(String query) {
         String[] params = query.split("&");
         Map<String, String> map = new HashMap<>();
 
@@ -300,26 +315,37 @@ public class EditAliasFrag extends Fragment {
         return map;
     }
 
-    private void getUtm(String url){
+    private void getUtm(String url){ //function that receives returned destination url to extract UTM parameters from it and display them
 
         boolean found = false;
         int index = url.indexOf("?");
+        numOfUtm = 0;
 
-        if (url.contains("?utm")) {
+        if (url.contains("?utm")) { // to make sure the '?' is for utms not other parameter
 
             while (!found) {
 
-
-                char ch1 = url.charAt(index + 1);
+                char ch1 = url.charAt(index + 1); //charachter after the '?'
                 char ch2 = 'u';
                 int dif = ch1 - ch2;
                 if (dif == 0) { //equal
-                    url = url.substring(index + 1);
+
+                    cleanUrl = url.substring(0,index); //new
+                    plainUrl = url.substring(0,index); //idkkkkk
+                    Log.d("cleaned : ", " " + cleanUrl);
+
+                    url = url.substring(index + 1); //to get text after '?' --> get utms
+
+
+
                     found = true;
-                    Map<String, String> map = getQueryMap(url);
+                    Map<String, String> map = getQueryMap(url); //function that creates map for key values pairs of utm
+
+                    numOfUtm = map.size();
+
                     Log.d("map : ", " " + map.toString());
 
-                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                    for (Map.Entry<String, String> entry : map.entrySet()) { //for loop to store all utms in the array and display them
                         ItemCard itemCard = new ItemCard(entry.getKey(), entry.getValue(), "=");
                         insertItem(itemCard);
                     }
@@ -329,17 +355,23 @@ public class EditAliasFrag extends Fragment {
 
                 }
 
-            }
+            } //end while loop
+
+        } //end if
 
 
 
-
-        }
     }// end getUtm
 
     private void insertItem(ItemCard itemCard) {
 
         arrayList.add(itemCard);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void insertItem() {
+
+        arrayList.add(new ItemCard());
         adapter.notifyDataSetChanged();
     }
 
@@ -363,6 +395,13 @@ public class EditAliasFrag extends Fragment {
 
     private void editShortURL(String aliasName, String destUrl){
 
+        String  utmUrl = addUtm(); //to see if there are any new utms added and get the updated url accordingly
+
+        if (isUtm){
+
+            destUrl = utmUrl;
+        }
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
@@ -380,9 +419,77 @@ public class EditAliasFrag extends Fragment {
             e.printStackTrace();
         }
 
+        cleanUrl = plainUrl; //plain url is a clean version without any utms, we go back to it each time for a 'clean start' hehe
+
 
     }
 
+
+    private String addUtm(){ //this functions checks if there are added utms in the array list to update url
+
+        String url = destURL.getText().toString();
+        //cleanUrl = destURL.getText().toString();
+        int count = arrayList.size(); //size of array (all utms currently)
+
+
+        if (count != 0 ){
+            isUtm = true;
+        }
+
+        // if (numOfUtm == 0){
+        if (!(cleanUrl.charAt(cleanUrl.length()-1) == '?')) {
+
+            cleanUrl = cleanUrl + "?"; //if it doesn't have previous utms, add '?'
+        }
+        // }
+
+
+        for (int i = 0; i<count; i++){ //i=numofutm
+
+            ItemCard itemCard = arrayList.get(i);
+
+            if (count-1 == i){ //last one
+                cleanUrl = cleanUrl+itemCard.getParamEdit()+"="+itemCard.getValueEdit();
+            } else{
+
+                cleanUrl = cleanUrl+itemCard.getParamEdit()+"="+itemCard.getValueEdit()+"&"; //later remove & for last element
+
+            }
+
+            Log.d("TestGet","hi "+itemCard.getParamEdit());
+
+        } //end for loop
+
+        Log.d("output","url is: "+cleanUrl);
+        return cleanUrl;
+
+    } //end addUtm
+
+
+//    public static void removeItem(int position){
+//     //  cleanUrl = destURL.getText().toString();
+//      //  int index = url.indexOf("?");
+//        //url = url.substring(index + 1);
+//
+//       // Map<String, String> map = getQueryMap(url);
+//
+//        //Log.d("map : ", " " + map.toString());
+//
+//
+//
+//       // for (Map.Entry<String, String> entry : map.entrySet()) {
+//
+//        ItemCard itemCard = arrayList.get(position);
+//
+//
+//        cleanUrl = cleanUrl.replace(itemCard.getParamEdit()+"="+itemCard.getValueEdit(), "");
+//       // cleanUrl = cleanUrl.replace(itemCard.getEqual(), "");
+//        arrayList.remove(itemCard);
+//
+//
+//
+//       // }
+//    }
 
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);
