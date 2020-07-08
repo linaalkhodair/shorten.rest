@@ -26,13 +26,15 @@ public class SnippetAdapter extends RecyclerView.Adapter<SnippetAdapter.AdapterV
     public static class AdapterViewHolder extends RecyclerView.ViewHolder {
 
         EditText snippetContent;
-       ImageView removeSnippet;
+        ImageView removeSnippet;
+        TextView snippetID;
 
         public AdapterViewHolder(View itemView) {
             super(itemView);
 
             snippetContent = itemView.findViewById(R.id.snippetContent);
             removeSnippet = itemView.findViewById(R.id.removeSnippet);
+            snippetID = itemView.findViewById(R.id.snippetID);
 
         }
     } // end AdapterViewHolder
@@ -56,6 +58,7 @@ public class SnippetAdapter extends RecyclerView.Adapter<SnippetAdapter.AdapterV
         final SnippetCard currentItem = mArrayList.get(position);
 
         holder.snippetContent.setText(currentItem.getSnippetContent());
+        holder.snippetID.setText(currentItem.getSnippetID());
         holder.removeSnippet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

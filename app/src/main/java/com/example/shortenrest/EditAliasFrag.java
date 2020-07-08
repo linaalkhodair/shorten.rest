@@ -57,7 +57,7 @@ import okhttp3.Response;
 public class EditAliasFrag extends Fragment {
 
     EditText destURL;
-    EditText domainEdit, snippetExample;
+    EditText domainEdit;
     EditText shortURL;
     Button searchBtn;
     Button saveBtn;
@@ -131,7 +131,6 @@ public class EditAliasFrag extends Fragment {
         destTV = view.findViewById(R.id.destTextView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
 
-        snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
@@ -208,7 +207,6 @@ public class EditAliasFrag extends Fragment {
                     spinner.setSelection(i);
                 }
             }
-            snippetExample.setVisibility(View.VISIBLE);
 
         }
 
@@ -231,8 +229,7 @@ public class EditAliasFrag extends Fragment {
             public void onClick(View v) {
                 snippetList = new SnippetList(snippetID, "");
                 Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
-//                snippetExample.setVisibility(View.VISIBLE);
-//                snippetExample.setText(snippetList.getParameterExample(snippetID));
+
                 insertSnippet(snippetList.getParameterExample(snippetID), snippetID);
                 isSnippet = true;
             }
@@ -245,6 +242,7 @@ public class EditAliasFrag extends Fragment {
         snippetArrayList.add(new SnippetCard(content, id));
         snippetAdapter.notifyDataSetChanged();
     }
+
     private void buildRecyclerView(View view){
 
         //for testing
@@ -486,7 +484,9 @@ public class EditAliasFrag extends Fragment {
                 snippetID = analyticsType;
                 hasPreviousSnippet = true;
                 String params = snippetJson.getJSONObject("parameters").toString();
-                snippetExample.setText(params);
+                SnippetCard snippetCard = new SnippetCard(params, analyticsType);
+                snippetArrayList.add(snippetCard);
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -510,22 +510,14 @@ public class EditAliasFrag extends Fragment {
         }
 
         if (isSnippet || hasPreviousSnippet) {
-//            String parameters = snippetExample.getText().toString();
-//            if (parameters.equals("NA")) {
-//                parameters = "";
-//            }
-//            parameters = parameters.replaceAll("\n","");
-
             String content = setSnippets(destUrl);
 
             body = RequestBody.create(mediaType, content);
 
-            //body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
         } else {
 
             body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
         }
-
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
@@ -543,7 +535,6 @@ public class EditAliasFrag extends Fragment {
         }
 
         cleanUrl = plainUrl; //plain url is a clean version without any utms, we go back to it each time for a 'clean start' hehe
-
 
     }
 
@@ -565,7 +556,6 @@ public class EditAliasFrag extends Fragment {
             }
             //snippets[i] = snippet;
         }
-
 
           content += "]}";
         return content;
@@ -611,8 +601,7 @@ public class EditAliasFrag extends Fragment {
         return cleanUrl;
 
     } //end addUtm
-
-
+    
 
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);

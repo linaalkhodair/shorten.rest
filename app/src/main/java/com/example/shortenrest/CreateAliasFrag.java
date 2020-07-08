@@ -61,7 +61,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     Button okBtn;
     TextView dialogMsg, addUtm;
 
-    EditText snippetExample;
     ImageView addSnippet, addIcon, removeIcon;
 
     RelativeLayout relativeLayout;
@@ -77,6 +76,12 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    //Snippet recycler:
+    ArrayList<SnippetCard> snippetArrayList;
+    private RecyclerView snippetRecyclerView;
+    private RecyclerView.Adapter snippetAdapter;
+    private RecyclerView.LayoutManager snippetLayoutManager;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -120,7 +125,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         removeIcon = view.findViewById(R.id.removeIcon);
         relativeLayout = view.findViewById(R.id.relativeLayout);
 
-        snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
 
         addUtm = view.findViewById(R.id.addUtm);
@@ -136,6 +140,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
             }
         });
+
+        buildSnippetRecyclerView(view);
 
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
@@ -158,11 +164,12 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View v) {
 
             if (isValid()) {
-                if (isSnippet) {
-                    createAliasSnippet();
-                } else {
-                    createAlias();
-                }
+//                if (isSnippet) {
+//                    createAliasSnippet();
+//                } else {
+//                    createAlias();
+//                }
+                createAlias();
 
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
@@ -195,12 +202,14 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end onViewCreated()
 
 
+
     private void buildSnippetMenu(){
 
         String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
         spinner.setSelection(1);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
         spinner.setAdapter(adapter);
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
@@ -221,13 +230,32 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View v) {
                 snippetList = new SnippetList(snippetID, "");
                 Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
-                snippetExample.setVisibility(View.VISIBLE);
-                snippetExample.setText(snippetList.getParameterExample(snippetID));
+
+                insertSnippet(snippetList.getParameterExample(snippetID), snippetID);
                 isSnippet = true;
             }
         });
 
+    } //end buildSnippetMenu
+
+    private void buildSnippetRecyclerView(View view){
+        snippetArrayList = new ArrayList<>();
+
+        snippetRecyclerView = view.findViewById(R.id.snippetRecycler);
+        snippetLayoutManager = new LinearLayoutManager(mContext);
+        snippetAdapter = new SnippetAdapter(snippetArrayList);
+
+        snippetRecyclerView.setLayoutManager(snippetLayoutManager);
+        snippetRecyclerView.setAdapter(snippetAdapter);
+
     }
+
+    private void insertSnippet(String content, String id){
+
+        snippetArrayList.add(new SnippetCard(content, id));
+        snippetAdapter.notifyDataSetChanged();
+    }
+
 
     private void buildRecyclerView(View view){
 
@@ -288,15 +316,25 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
         String destinationUrl = longURL.getText().toString();
         String utmUrl = getUTMs();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body;
 
         if (isUtm){
 
             destinationUrl = utmUrl;
         }
 
+        if (isSnippet) {
+            String content = setSnippets(destinationUrl);
+
+            body = RequestBody.create(mediaType, content);
+
+        } else {
+
+            body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destinationUrl+"\", \"country\": null, \"os\": null}]}");
+        }
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destinationUrl+"\", \"country\": null, \"os\": null}]}");
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
                 .method("POST", body)
@@ -324,40 +362,58 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end createAlias
 
 
-    public void createAliasSnippet(){
+//    private void createAliasSnippet(){
+//
+//
+//        OkHttpClient client = new OkHttpClient().newBuilder().build();
+//        MediaType mediaType = MediaType.parse("application/json");
+//        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
+//        Request request = new Request.Builder()
+//                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
+//                .method("POST", body)
+//                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+//                .addHeader("Content-Type", "application/json")
+//                .build();
+//        try {
+//            Response response = client.newCall(request).execute();
+//            String json = response.body().string();
+//
+//            Log.d("jsonSN","json:"+json);
+//            Log.d("HERE(SN)","response is :"+response);
+//
+//            JSONObject jsonObj = new JSONObject(json);
+//            String shortened = jsonObj.getString("shortUrl");
+//            Log.d("shorturl(SN)","="+shortened);
+//            shortURL.setText(shortened);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-        String parameters = snippetExample.getText().toString();
-        if (parameters.equals("NA")) {
-            parameters = "";
+    private String setSnippets(String destUrl){
+
+        // String snippets[] = new String[snippetArrayList.size()];
+        String content = "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [";
+
+
+        for (int i=0; i<snippetArrayList.size(); i++){
+
+            SnippetCard snippetCard = snippetArrayList.get(i);
+            if (snippetArrayList.size()-1 == i){ //last one
+                content += "{\"id\": \""+snippetCard.getSnippetID()+"\", \"parameters\": "+snippetCard.getSnippetContent()+"}";
+            }
+            else {
+                content += "{\"id\": \"" + snippetCard.getSnippetID() + "\", \"parameters\": " + snippetCard.getSnippetContent() + "},";
+            }
+            //snippets[i] = snippet;
         }
-        parameters = parameters.replaceAll("\n","");
 
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
-        Request request = new Request.Builder()
-                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
-                .method("POST", body)
-                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
-                .addHeader("Content-Type", "application/json")
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            String json = response.body().string();
-
-            Log.d("jsonSN","json:"+json);
-            Log.d("HERE(SN)","response is :"+response);
-
-            JSONObject jsonObj = new JSONObject(json);
-            String shortened = jsonObj.getString("shortUrl");
-            Log.d("shorturl(SN)","="+shortened);
-            shortURL.setText(shortened);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        content += "]}";
+        return content;
 
     }
 

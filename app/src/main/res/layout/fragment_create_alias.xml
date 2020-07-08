@@ -167,26 +167,37 @@
                 android:layout_marginTop="390dp"
                 android:src="@drawable/ic_add_circle_outline_black_24dp" />
 
-            <EditText
-                android:id="@+id/snippetExample"
-                android:layout_width="370sp"
-                android:layout_height="160dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="450sp"
-                android:background="@drawable/round_shape"
-                android:ems="10"
-                android:hint="Write your comment.."
-                android:inputType="textMultiLine"
-                android:padding="@dimen/padd_10"
-                android:textSize="15sp"
-                android:visibility="visible" />
+<!--            <EditText-->
+<!--                android:id="@+id/snippetExample"-->
+<!--                android:layout_width="370sp"-->
+<!--                android:layout_height="160dp"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginTop="450sp"-->
+<!--                android:background="@drawable/round_shape"-->
+<!--                android:ems="10"-->
+<!--                android:hint="Write your comment.."-->
+<!--                android:inputType="textMultiLine"-->
+<!--                android:padding="@dimen/padd_10"-->
+<!--                android:textSize="15sp"-->
+<!--                android:visibility="visible" />-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/snippetRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="450dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible"
+                android:padding="4dp"
+                android:scrollbars="vertical" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="640dp"
+                android:layout_below="@+id/snippetRecycler"
                 android:text="UTM"
+                android:id="@+id/utmId"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -195,7 +206,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="670dp"
+                android:layout_below="@+id/utmId"
+                android:layout_marginTop="5dp"
                 android:id="@+id/addUtm"
                 android:text="Add UTM"
                 android:textColor="@color/colorAccent"
@@ -206,7 +218,8 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="700dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/addUtm"
                 android:padding="4dp"
                 android:scrollbars="vertical" />
 
