@@ -7,11 +7,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1300dp">
+        android:layout_height="1400dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1300dp"
+        android:layout_height="1400dp"
         android:layout_alignParentBottom="true"
         >
 
@@ -65,7 +65,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:id="@+id/relativeLayout"
-             android:visibility="invisible">
+             android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
@@ -155,7 +155,7 @@
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="300sp"
-            android:layout_height="60sp"
+            android:layout_height="40sp"
             android:layout_marginStart="30dp"
             android:layout_marginTop="485dp"
             android:backgroundTint="@color/colorPrimaryDark"
@@ -170,25 +170,22 @@
             android:layout_marginTop="495dp"
             android:src="@drawable/ic_add_circle_outline_black_24dp" />
 
-        <EditText
-            android:id="@+id/snippetExample"
-            android:layout_width="370sp"
-            android:layout_height="160dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="560sp"
-            android:background="@drawable/round_shape"
-            android:ems="10"
-            android:hint="Write your comment.."
-            android:inputType="textMultiLine"
-            android:padding="@dimen/padd_10"
-            android:textSize="15sp"
-            android:visibility="invisible" />
+             <androidx.recyclerview.widget.RecyclerView
+                 android:id="@+id/snippetRecycler"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="530dp"
+                 android:layout_marginBottom="20dp"
+                 android:visibility="visible"
+                 android:padding="4dp"
+                 android:scrollbars="vertical" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="730dp"
+            android:layout_below="@+id/snippetRecycler"
+            android:id="@+id/utmId"
             android:text="UTM"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"
@@ -198,7 +195,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="760dp"
+            android:layout_below="@+id/utmId"
+            android:layout_marginTop="5dp"
             android:id="@+id/addUtm"
             android:text="Add UTM"
             android:textColor="@color/colorAccent"
@@ -209,7 +207,8 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="800dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/addUtm"
             android:visibility="visible"
             android:padding="4dp"
             android:scrollbars="vertical" />
@@ -219,8 +218,9 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginTop="1200dp"
+            android:layout_marginTop="10dp"
             android:layout_marginStart="150dp"
+            android:layout_below="@+id/recyclerView"
             android:textSize="16sp"
             android:layout_centerHorizontal="true"
             android:text="save changes"

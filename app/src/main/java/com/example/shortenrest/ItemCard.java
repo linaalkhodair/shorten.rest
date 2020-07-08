@@ -1,6 +1,5 @@
 package com.example.shortenrest;
 
-import android.os.Parcel;
 
 public class ItemCard {
 

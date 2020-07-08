@@ -83,10 +83,17 @@ public class EditAliasFrag extends Fragment {
     private Context mContext;
     String plainUrl;
 
-    static ArrayList<ItemCard> arrayList;
+    ArrayList<ItemCard> arrayList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    //Snippet recycler:
+    ArrayList<SnippetCard> snippetArrayList;
+    private RecyclerView snippetRecyclerView;
+    private RecyclerView.Adapter snippetAdapter;
+    private RecyclerView.LayoutManager snippetLayoutManager;
+
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -146,6 +153,8 @@ public class EditAliasFrag extends Fragment {
         });
 
 
+        buildSnippetRecyclerView(view);
+
         destURL.setVisibility(View.INVISIBLE);
         domainEdit.setVisibility(View.INVISIBLE);
         saveBtn.setVisibility(View.INVISIBLE);
@@ -199,6 +208,7 @@ public class EditAliasFrag extends Fragment {
                     spinner.setSelection(i);
                 }
             }
+            snippetExample.setVisibility(View.VISIBLE);
 
         }
 
@@ -221,14 +231,20 @@ public class EditAliasFrag extends Fragment {
             public void onClick(View v) {
                 snippetList = new SnippetList(snippetID, "");
                 Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
-                snippetExample.setVisibility(View.VISIBLE);
-                snippetExample.setText(snippetList.getParameterExample(snippetID));
+//                snippetExample.setVisibility(View.VISIBLE);
+//                snippetExample.setText(snippetList.getParameterExample(snippetID));
+                insertSnippet(snippetList.getParameterExample(snippetID), snippetID);
                 isSnippet = true;
             }
         });
 
     }
 
+    private void insertSnippet(String content, String id){
+
+        snippetArrayList.add(new SnippetCard(content, id));
+        snippetAdapter.notifyDataSetChanged();
+    }
     private void buildRecyclerView(View view){
 
         //for testing
@@ -240,6 +256,20 @@ public class EditAliasFrag extends Fragment {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+    }
+
+    private void buildSnippetRecyclerView(View view){
+        snippetArrayList = new ArrayList<>();
+//        insertSnippet(snippetList.getParameterExample(snippetID));
+
+        snippetRecyclerView = view.findViewById(R.id.snippetRecycler);
+        snippetLayoutManager = new LinearLayoutManager(mContext);
+        snippetAdapter = new SnippetAdapter(snippetArrayList);
+
+        snippetRecyclerView.setLayoutManager(snippetLayoutManager);
+        snippetRecyclerView.setAdapter(snippetAdapter);
+
 
     }
 
@@ -465,6 +495,7 @@ public class EditAliasFrag extends Fragment {
 
         buildSnippetMenu();
 
+
     }
 
     private void editShortURL(String aliasName, String destUrl){
@@ -478,14 +509,18 @@ public class EditAliasFrag extends Fragment {
             destUrl = utmUrl;
         }
 
-        if (isSnippet) {
-            String parameters = snippetExample.getText().toString();
-            if (parameters.equals("NA")) {
-                parameters = "";
-            }
-            parameters = parameters.replaceAll("\n","");
+        if (isSnippet || hasPreviousSnippet) {
+//            String parameters = snippetExample.getText().toString();
+//            if (parameters.equals("NA")) {
+//                parameters = "";
+//            }
+//            parameters = parameters.replaceAll("\n","");
 
-            body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
+            String content = setSnippets(destUrl);
+
+            body = RequestBody.create(mediaType, content);
+
+            //body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
         } else {
 
             body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
@@ -512,6 +547,30 @@ public class EditAliasFrag extends Fragment {
 
     }
 
+
+    private String setSnippets(String destUrl){
+
+       // String snippets[] = new String[snippetArrayList.size()];
+        String content = "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [";
+
+
+        for (int i=0; i<snippetArrayList.size(); i++){
+
+            SnippetCard snippetCard = snippetArrayList.get(i);
+            if (snippetArrayList.size()-1 == i){ //last one
+                content += "{\"id\": \""+snippetCard.getSnippetID()+"\", \"parameters\": "+snippetCard.getSnippetContent()+"}";
+            }
+            else {
+                content += "{\"id\": \"" + snippetCard.getSnippetID() + "\", \"parameters\": " + snippetCard.getSnippetContent() + "},";
+            }
+            //snippets[i] = snippet;
+        }
+
+
+          content += "]}";
+        return content;
+
+    }
 
     private String addUtm(){ //this functions checks if there are added utms in the array list to update url
 
