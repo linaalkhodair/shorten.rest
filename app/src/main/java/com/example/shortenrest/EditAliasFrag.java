@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,10 +70,12 @@ public class EditAliasFrag extends Fragment {
     ImageView addSnippet;
     boolean isSnippet;
     SnippetList snippetList;
+    boolean hasPreviousSnippet;
 
     Credentials credentials = new Credentials();
     String domain = credentials.getDomain();
     String apiKey = credentials.getAPI_KEY();
+    RelativeLayout relativeLayout;
 
     Button okBtn;
     static String cleanUrl;
@@ -119,12 +122,13 @@ public class EditAliasFrag extends Fragment {
         saveBtn = view.findViewById(R.id.saveChngs);
         domainTV = view.findViewById(R.id.domainTextView);
         destTV = view.findViewById(R.id.destTextView);
+        relativeLayout = view.findViewById(R.id.relativeLayout);
 
         snippetExample = view.findViewById(R.id.snippetExample);
         addSnippet = view.findViewById(R.id.addSnippet);
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
-        buildSnippetMenu();
+//        buildSnippetMenu();
 
 
         addUtm = view.findViewById(R.id.addUtm);
@@ -186,6 +190,17 @@ public class EditAliasFrag extends Fragment {
         spinner.setSelection(1);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
         spinner.setAdapter(adapter);
+
+        if (hasPreviousSnippet) {
+
+            for (int i=0; i<items.length; i++){
+
+                if (items[i].equals(snippetID)) {
+                    spinner.setSelection(i);
+                }
+            }
+
+        }
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
@@ -337,6 +352,7 @@ public class EditAliasFrag extends Fragment {
                     JSONArray array = jsonObj.getJSONArray("snippets");
                     getSnippet(array);
 
+                    relativeLayout.setVisibility(View.VISIBLE);
 
 
         } catch (IOException e) {
@@ -427,12 +443,18 @@ public class EditAliasFrag extends Fragment {
 
     private void getSnippet(JSONArray array){
 
+        if (array.length() == 0) {
+            hasPreviousSnippet = false;
+        }
+
         for (int i=0; i<array.length(); i++){
 
             try {
                 JSONObject snippetJson = array.getJSONObject(i);
 
                 String analyticsType = snippetJson.getString("id");
+                snippetID = analyticsType;
+                hasPreviousSnippet = true;
                 String params = snippetJson.getJSONObject("parameters").toString();
                 snippetExample.setText(params);
 
@@ -441,10 +463,14 @@ public class EditAliasFrag extends Fragment {
             }
         }
 
+        buildSnippetMenu();
+
     }
 
     private void editShortURL(String aliasName, String destUrl){
 
+        RequestBody body;
+        MediaType mediaType = MediaType.parse("application/json");
         String  utmUrl = addUtm(); //to see if there are any new utms added and get the updated url accordingly
 
         if (isUtm){
@@ -452,9 +478,21 @@ public class EditAliasFrag extends Fragment {
             destUrl = utmUrl;
         }
 
+        if (isSnippet) {
+            String parameters = snippetExample.getText().toString();
+            if (parameters.equals("NA")) {
+                parameters = "";
+            }
+            parameters = parameters.replaceAll("\n","");
+
+            body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
+        } else {
+
+            body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
+        }
+
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+destUrl+"\", \"country\": null, \"os\": null}]}");
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
                 .method("PUT", body)

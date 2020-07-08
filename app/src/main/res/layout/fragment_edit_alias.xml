@@ -7,11 +7,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1350dp">
+        android:layout_height="1300dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1350dp"
+        android:layout_height="1300dp"
         android:layout_alignParentBottom="true"
         >
 
@@ -61,6 +61,11 @@
 
             />
 
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/relativeLayout"
+             android:visibility="invisible">
 
         <TextView
             android:layout_width="wrap_content"
@@ -177,7 +182,7 @@
             android:inputType="textMultiLine"
             android:padding="@dimen/padd_10"
             android:textSize="15sp"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -223,6 +228,8 @@
             android:textColor="@color/colorPrimary"
 
             />
+
+         </RelativeLayout>
 
             </RelativeLayout>
     </ScrollView>
