@@ -7,11 +7,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="930dp">
+        android:layout_height="1350dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="930sp"
+        android:layout_height="1350dp"
         android:layout_alignParentBottom="true"
         >
 
@@ -127,27 +127,50 @@
                 android:textSize="20sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/saveChngs"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="435dp"
-            android:layout_marginStart="150dp"
-            android:textSize="16sp"
-            android:layout_centerHorizontal="true"
-            android:text="save changes"
-            android:background="@drawable/round_shape_btn"
-            android:textColor="@color/colorPrimary"
 
-            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="445dp"
+            android:text="Tracking Pixels"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/infoIcon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="180dp"
+            android:layout_marginTop="445dp"
+            android:src="@drawable/ic_info_outline_black_24dp" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="300sp"
+            android:layout_height="60sp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="485dp"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:spinnerMode="dropdown"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/addSnippet"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="355dp"
+            android:layout_marginTop="495dp"
+            android:src="@drawable/ic_add_circle_outline_black_24dp" />
 
         <EditText
             android:id="@+id/snippetExample"
             android:layout_width="370sp"
             android:layout_height="160dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="500sp"
+            android:layout_marginTop="560sp"
             android:background="@drawable/round_shape"
             android:ems="10"
             android:hint="Write your comment.."
@@ -160,7 +183,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="670dp"
+            android:layout_marginTop="730dp"
+            android:text="UTM"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="760dp"
             android:id="@+id/addUtm"
             android:text="Add UTM"
             android:textColor="@color/colorAccent"
@@ -171,10 +204,25 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="700dp"
+            android:layout_marginTop="800dp"
             android:visibility="visible"
             android:padding="4dp"
             android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/saveChngs"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="1200dp"
+            android:layout_marginStart="150dp"
+            android:textSize="16sp"
+            android:layout_centerHorizontal="true"
+            android:text="save changes"
+            android:background="@drawable/round_shape_btn"
+            android:textColor="@color/colorPrimary"
+
+            />
 
             </RelativeLayout>
     </ScrollView>

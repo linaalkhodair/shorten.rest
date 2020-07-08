@@ -21,8 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +63,12 @@ public class EditAliasFrag extends Fragment {
     TextView domainTV, destTV, addUtm;
     boolean isUtm;
     int numOfUtm; //stores the number of originalUtms
+
+    Spinner spinner;
+    String snippetID;
+    ImageView addSnippet;
+    boolean isSnippet;
+    SnippetList snippetList;
 
     Credentials credentials = new Credentials();
     String domain = credentials.getDomain();
@@ -109,7 +119,13 @@ public class EditAliasFrag extends Fragment {
         saveBtn = view.findViewById(R.id.saveChngs);
         domainTV = view.findViewById(R.id.domainTextView);
         destTV = view.findViewById(R.id.destTextView);
+
         snippetExample = view.findViewById(R.id.snippetExample);
+        addSnippet = view.findViewById(R.id.addSnippet);
+        //creating dropdown menu
+        spinner = view.findViewById(R.id.spinner);
+        buildSnippetMenu();
+
 
         addUtm = view.findViewById(R.id.addUtm);
         SpannableString content = new SpannableString("Add UTM");
@@ -163,6 +179,40 @@ public class EditAliasFrag extends Fragment {
         });
 
     } //end onViewCreated
+
+    private void buildSnippetMenu(){
+
+        String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
+        spinner.setSelection(1);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, items);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                snippetID = parent.getItemAtPosition(position).toString();
+                Log.d("testLOL",snippetID);
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+
+        addSnippet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snippetList = new SnippetList(snippetID, "");
+                Log.d("herehehrhe",snippetList.getParameterExample(snippetID));
+                snippetExample.setVisibility(View.VISIBLE);
+                snippetExample.setText(snippetList.getParameterExample(snippetID));
+                isSnippet = true;
+            }
+        });
+
+    }
 
     private void buildRecyclerView(View view){
 
@@ -466,30 +516,6 @@ public class EditAliasFrag extends Fragment {
     } //end addUtm
 
 
-//    public static void removeItem(int position){
-//     //  cleanUrl = destURL.getText().toString();
-//      //  int index = url.indexOf("?");
-//        //url = url.substring(index + 1);
-//
-//       // Map<String, String> map = getQueryMap(url);
-//
-//        //Log.d("map : ", " " + map.toString());
-//
-//
-//
-//       // for (Map.Entry<String, String> entry : map.entrySet()) {
-//
-//        ItemCard itemCard = arrayList.get(position);
-//
-//
-//        cleanUrl = cleanUrl.replace(itemCard.getParamEdit()+"="+itemCard.getValueEdit(), "");
-//       // cleanUrl = cleanUrl.replace(itemCard.getEqual(), "");
-//        arrayList.remove(itemCard);
-//
-//
-//
-//       // }
-//    }
 
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);

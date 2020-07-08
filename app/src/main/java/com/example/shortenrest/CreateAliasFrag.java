@@ -192,7 +192,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        EditText editText = new EditText(mContext);
     } //end onViewCreated()
 
 
