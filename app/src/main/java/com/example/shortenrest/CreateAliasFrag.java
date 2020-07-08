@@ -164,13 +164,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View v) {
 
             if (isValid()) {
-//                if (isSnippet) {
-//                    createAliasSnippet();
-//                } else {
-//                    createAlias();
-//                }
-                createAlias();
 
+                createAlias();
                 Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
                 }
