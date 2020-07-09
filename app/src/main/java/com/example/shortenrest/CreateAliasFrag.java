@@ -357,38 +357,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end createAlias
 
 
-//    private void createAliasSnippet(){
-//
-//
-//        OkHttpClient client = new OkHttpClient().newBuilder().build();
-//        MediaType mediaType = MediaType.parse("application/json");
-//        RequestBody body = RequestBody.create(mediaType, "{\"destinations\": [{\"url\": \""+longURL.getText().toString()+"\", \"country\": null, \"os\": null}], \"snippets\": [{\"id\": \""+snippetID+"\", \"parameters\": "+parameters+"}]}");
-//        Request request = new Request.Builder()
-//                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
-//                .method("POST", body)
-//                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
-//                .addHeader("Content-Type", "application/json")
-//                .build();
-//        try {
-//            Response response = client.newCall(request).execute();
-//            String json = response.body().string();
-//
-//            Log.d("jsonSN","json:"+json);
-//            Log.d("HERE(SN)","response is :"+response);
-//
-//            JSONObject jsonObj = new JSONObject(json);
-//            String shortened = jsonObj.getString("shortUrl");
-//            Log.d("shorturl(SN)","="+shortened);
-//            shortURL.setText(shortened);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
     private String setSnippets(String destUrl){
 
         // String snippets[] = new String[snippetArrayList.size()];
