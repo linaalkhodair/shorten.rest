@@ -40,10 +40,21 @@ public class SettingsActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.saveBtn);
         domainSet = findViewById(R.id.domainSet);
 
-        Toolbar toolbar=findViewById(R.id.settings_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        if (!SplashScreen.isFirstTime) {
+
+            api.setText(credentials.getAPI_KEY());
+            domain.setText(credentials.getDomain());
+
+            //no back button when its the first run
+            Toolbar toolbar=findViewById(R.id.settings_toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        }
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,11 +62,22 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (validate()) {
                     credentials.setAPI_KEY(api.getText().toString());
-                    credentials.setDomain(domain.getText().toString());
-                    Toast.makeText(getApplicationContext(), "Settings has been saved successfully.", Toast.LENGTH_SHORT).show();
+                    if (domain.getText().toString().isEmpty()) {
+                        credentials.setDomain("short.fyi");
+                    }else {
+                        credentials.setDomain(domain.getText().toString());
+                    }
+                    Toast.makeText(getApplicationContext(), "Settings has been saved successfully.", Toast.LENGTH_LONG).show();
+                }
+
+                if (SplashScreen.isFirstTime) {
+
+                    startActivity(new Intent(SettingsActivity.this, MainActivity.class));
                 }
             }
         });
+
+
 
 
     } //end onCreate
@@ -66,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
         String dom = domain.getText().toString();
 
         //ensure not empty
-        if ( apiKey.isEmpty() || dom.isEmpty() ) {
+        if ( apiKey.isEmpty()) {
             createDialog("Missing field, please fill in all fields and try again.");
             return false;
         }
@@ -96,7 +118,7 @@ public class SettingsActivity extends AppCompatActivity {
         // If the string is empty
         // return false
         if (str == null) {
-            return false;
+            return true; //we use default domain 'short.fyi'
         }
 
         // Pattern class contains matcher()
