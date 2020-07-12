@@ -5,10 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_item"
-    android:layout_marginBottom="4dp"
     android:layout_marginTop="4dp"
     tools:context=".ItemCard"
-    app:cardCornerRadius="4dp">
+    >
 
 
     <LinearLayout
@@ -24,10 +23,11 @@
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:background="@drawable/round_shape"
+            android:fontFamily="@font/nunito_light"
             android:ems="10"
             android:hint="param"
             android:padding="@dimen/padd_10"
-            android:textSize="15sp"
+            android:textSize="17sp"
             />
 
         <TextView
@@ -44,11 +44,12 @@
             android:layout_width="150sp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
+            android:fontFamily="@font/nunito_light"
             android:background="@drawable/round_shape"
             android:ems="10"
             android:hint="value"
             android:padding="@dimen/padd_10"
-            android:textSize="15sp"
+            android:textSize="17sp"
             />
 
         <ImageView

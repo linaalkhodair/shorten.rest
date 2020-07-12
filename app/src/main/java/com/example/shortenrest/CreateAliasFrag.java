@@ -69,6 +69,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     boolean isUtm;
 
     private Context mContext;
+    private Credentials credentials;
 
     SnippetList snippetList;
 
@@ -115,6 +116,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         } //network request purposes
+
+        credentials = new Credentials();
 
         longURL = view.findViewById(R.id.longURL);
         shortURL = view.findViewById(R.id.shortURL);
@@ -309,6 +312,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     private void createAlias() {
 
+        String apiKey = credentials.getAPI_KEY();
         String destinationUrl = longURL.getText().toString();
         String utmUrl = getUTMs();
         MediaType mediaType = MediaType.parse("application/json");
@@ -333,7 +337,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
                 .method("POST", body)
-                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+                .addHeader("x-api-key", apiKey) //later change take api from class
                 .addHeader("Content-Type", "application/json")
                 .build();
         try {

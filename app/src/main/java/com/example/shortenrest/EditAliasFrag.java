@@ -335,12 +335,14 @@ public class EditAliasFrag extends Fragment {
 
     private void getAlias(String aliasName){
 
+        String apiKey = credentials.getAPI_KEY();
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
                 .method("GET",null)
-                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //--TODO--later change take api from class
+                .addHeader("x-api-key", apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
@@ -500,6 +502,8 @@ public class EditAliasFrag extends Fragment {
 
     private void editShortURL(String aliasName, String destUrl){
 
+        String apiKey = credentials.getAPI_KEY();
+
         RequestBody body;
         MediaType mediaType = MediaType.parse("application/json");
         String  utmUrl = addUtm(); //to see if there are any new utms added and get the updated url accordingly
@@ -523,7 +527,7 @@ public class EditAliasFrag extends Fragment {
         Request request = new Request.Builder()
                 .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
                 .method("PUT", body)
-                .addHeader("x-api-key", "e9896260-b45b-11ea-9ec4-b1aa9a0ed929") //later change take api from class
+                .addHeader("x-api-key", apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();
         try (Response response = client.newCall(request).execute()) {
@@ -573,15 +577,12 @@ public class EditAliasFrag extends Fragment {
             isUtm = true;
         }
 
-        // if (numOfUtm == 0){
         if (!(cleanUrl.charAt(cleanUrl.length()-1) == '?')) {
 
             cleanUrl = cleanUrl + "?"; //if it doesn't have previous utms, add '?'
         }
-        // }
 
-
-        for (int i = 0; i<count; i++){ //i=numofutm
+        for (int i = 0; i<count; i++){
 
             ItemCard itemCard = arrayList.get(i);
 
