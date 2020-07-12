@@ -2,6 +2,8 @@ package com.example.shortenrest;
 
 public class SnippetCard {
 
+    //this class represents the Snippet row
+
     String snippetContent;
     String snippetID;
 

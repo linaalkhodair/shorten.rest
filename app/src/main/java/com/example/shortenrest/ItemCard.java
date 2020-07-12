@@ -3,6 +3,8 @@ package com.example.shortenrest;
 
 public class ItemCard {
 
+    //this class is represents the row of UTM
+
     private String paramEdit;
     private String valueEdit;
     private String equal;

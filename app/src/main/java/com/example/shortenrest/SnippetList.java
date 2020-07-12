@@ -4,6 +4,8 @@ import android.util.Log;
 
 public class SnippetList {
 
+    //this class represents a dictionary of predefined set of Pixels (snippets)
+
     private String ID;
     private String parameterExample;
 

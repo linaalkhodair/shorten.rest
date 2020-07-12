@@ -134,8 +134,6 @@ public class EditAliasFrag extends Fragment {
         addSnippet = view.findViewById(R.id.addSnippet);
         //creating dropdown menu
         spinner = view.findViewById(R.id.spinner);
-//        buildSnippetMenu();
-
 
         addUtm = view.findViewById(R.id.addUtm);
         SpannableString content = new SpannableString("Add UTM");
@@ -192,6 +190,8 @@ public class EditAliasFrag extends Fragment {
 
     } //end onViewCreated
 
+
+    //function that create the dropdown menu for pixels (snippets), if url already has snippets it will set the selection based on the previous snippets
     private void buildSnippetMenu(){
 
         String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
@@ -235,14 +235,19 @@ public class EditAliasFrag extends Fragment {
             }
         });
 
-    }
+    } //end buildSnippetMenu
 
+
+    //function that adds a snippet edit text when the '+' button is clicked
     private void insertSnippet(String content, String id){
 
         snippetArrayList.add(new SnippetCard(content, id));
         snippetAdapter.notifyDataSetChanged();
-    }
 
+    }// end insertSnippet
+
+
+    //function that creates the recycler view for the UTMs
     private void buildRecyclerView(View view){
 
         //for testing
@@ -255,11 +260,11 @@ public class EditAliasFrag extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-    }
+    }//end buildRecyclerView
 
+    //function that builds the recycler view for the snippets
     private void buildSnippetRecyclerView(View view){
         snippetArrayList = new ArrayList<>();
-//        insertSnippet(snippetList.getParameterExample(snippetID));
 
         snippetRecyclerView = view.findViewById(R.id.snippetRecycler);
         snippetLayoutManager = new LinearLayoutManager(mContext);
@@ -269,8 +274,10 @@ public class EditAliasFrag extends Fragment {
         snippetRecyclerView.setAdapter(snippetAdapter);
 
 
-    }
+    }//end buildSnippetRecyclerView
 
+
+    //function that validates the entered destination url (if changed) when the save button is clicked
     private boolean isValid(String url){
 
         boolean isValid = false;
@@ -294,8 +301,9 @@ public class EditAliasFrag extends Fragment {
         isValid = true;
         return isValid;
 
-    }
+    }// end isValid
 
+    //function that validates the entered short url
     private boolean validate(){
 
         String url = shortURL.getText().toString();
@@ -315,9 +323,10 @@ public class EditAliasFrag extends Fragment {
         }
 
         return true;
-    }
+    }//end end validate
 
 
+    //function that crops the shortURL to get the alias name in order to search for it using the API
     private String getAliasName(String shortURL){
 
         shortURL = shortURL.replace("https://","");
@@ -330,9 +339,9 @@ public class EditAliasFrag extends Fragment {
 
         return shortURL;
 
-    }
+    }// end getAliasName
 
-
+    //function that makes a request to the API by sending the alias name, in order to get the destination url, domain, snippets, utms everything.
     private void getAlias(String aliasName){
 
         String apiKey = credentials.getAPI_KEY();
@@ -399,6 +408,7 @@ public class EditAliasFrag extends Fragment {
 
     } //end getAlias
 
+    //fucntion that create a map, key value pairs from the url to retrieve the UTMS embedded, by using '&' to filter through
     private static Map<String, String> getQueryMap(String query) {
         String[] params = query.split("&");
         Map<String, String> map = new HashMap<>();
@@ -409,9 +419,11 @@ public class EditAliasFrag extends Fragment {
             map.put(name, value);
         }
         return map;
-    }
+    }// end getQueryMap
 
-    private void getUtm(String url){ //function that receives returned destination url to extract UTM parameters from it and display them
+
+    //function that receives returned destination url from API, in order to extract UTM parameters from it and display them
+    private void getUtm(String url){
 
         boolean found = false;
         int index = url.indexOf("?");
@@ -459,18 +471,22 @@ public class EditAliasFrag extends Fragment {
 
     }// end getUtm
 
+    //function that inserts a row of UTM that has been already embedded in url (previously added)
     private void insertItem(ItemCard itemCard) {
 
         arrayList.add(itemCard);
         adapter.notifyDataSetChanged();
-    }
+    }// end insertItem
 
+    //function that inserts an empty row of UTM when the '+' button has been clicked
     private void insertItem() {
 
         arrayList.add(new ItemCard());
         adapter.notifyDataSetChanged();
-    }
+    }// end insertItem
 
+    //function that recieves a JSONarray from the API request with the list of snippets that have been added previously to the url
+    //it iterates through the array to get the snippets -> 1- add them to the arraylist. 2- display them
     private void getSnippet(JSONArray array){
 
         if (array.length() == 0) {
@@ -498,8 +514,10 @@ public class EditAliasFrag extends Fragment {
         buildSnippetMenu();
 
 
-    }
+    }// end getSnippet
 
+
+    //function that makes a request to the API to update (edit) the short url, by updating  either snippets, utms, or destination url
     private void editShortURL(String aliasName, String destUrl){
 
         String apiKey = credentials.getAPI_KEY();
@@ -540,9 +558,10 @@ public class EditAliasFrag extends Fragment {
 
         cleanUrl = plainUrl; //plain url is a clean version without any utms, we go back to it each time for a 'clean start' hehe
 
-    }
+    }// end editShortURL
 
 
+    //function that returns the url with snippets added, by iterating through the arrayList of all snippets added
     private String setSnippets(String destUrl){
 
        // String snippets[] = new String[snippetArrayList.size()];
@@ -564,9 +583,11 @@ public class EditAliasFrag extends Fragment {
           content += "]}";
         return content;
 
-    }
+    }//end setSnippets
 
-    private String addUtm(){ //this functions checks if there are added utms in the array list to update url
+
+    //functions checks if there are added utms in the array list to update url
+    private String addUtm(){
 
         String url = destURL.getText().toString();
         //cleanUrl = destURL.getText().toString();
@@ -602,8 +623,9 @@ public class EditAliasFrag extends Fragment {
         return cleanUrl;
 
     } //end addUtm
-    
 
+
+    //function that creates the custom dialog by receiving the needed message
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.alert_dialog);
@@ -629,4 +651,5 @@ public class EditAliasFrag extends Fragment {
         dialog.show();
 
     }//end of createDialog
-}
+
+}// end EditAlasFrag
