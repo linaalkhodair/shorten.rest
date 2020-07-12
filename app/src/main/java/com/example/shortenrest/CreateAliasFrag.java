@@ -135,7 +135,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         addUtm.setText(content);
 
-        buildRecyclerView(view);
+        buildRecyclerView(view); //building utm recycler view
         addUtm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,7 +200,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end onViewCreated()
 
 
-
+    //function to build the dropdown menu for adding pixels to url
     private void buildSnippetMenu(){
 
         String[] items = new String[]{"Select snippet","GoogleAnalytics", "FacebookPixel", "GoogleConversionPixel", "LinkedInPixel", "AdrollPixel", "TaboolaPixel", "BingPixel", "PinterestPixel", "SnapchatPixel"};
@@ -236,6 +236,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     } //end buildSnippetMenu
 
+    //function to create the recycler view of snippets (pixels)
     private void buildSnippetRecyclerView(View view){
         snippetArrayList = new ArrayList<>();
 
@@ -246,15 +247,19 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         snippetRecyclerView.setLayoutManager(snippetLayoutManager);
         snippetRecyclerView.setAdapter(snippetAdapter);
 
-    }
+    } //end buildSnippetRecyclerView
 
+
+    //function to insert new snippet edit text when '+' button is clicked
     private void insertSnippet(String content, String id){
 
         snippetArrayList.add(new SnippetCard(content, id));
         snippetAdapter.notifyDataSetChanged();
-    }
+
+    } //end insertSnippet
 
 
+    //function to build the recycler view for UTMs
     private void buildRecyclerView(View view){
 
         //for testing
@@ -267,13 +272,15 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-    }
+    }// end buildRecyclerView
 
+
+    //function to insert a new row of utm
     private void insertItem() {
 
         arrayList.add(new ItemCard());
         adapter.notifyDataSetChanged();
-    }
+    }// end insertItem
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -285,6 +292,8 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     }
 
+
+    //function to validate the entered destination url field
     private boolean isValid(){
 
         boolean isValid = false;
@@ -308,8 +317,12 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         isValid = true;
         return isValid;
 
-    }
+    }// end isValid
 
+
+    //function that creates the request to the API to create a short URL
+    //if utms have been added, it will check and add them to the url
+    //if snippets have been added, it will check to add them to the destinations in the request
     private void createAlias() {
 
         String apiKey = credentials.getAPI_KEY();
@@ -361,6 +374,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end createAlias
 
 
+   //function that returns the url with snippets added, by iterating through the arrayList of all snippets added
     private String setSnippets(String destUrl){
 
         // String snippets[] = new String[snippetArrayList.size()];
@@ -382,8 +396,10 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
         content += "]}";
         return content;
 
-    }
+    }//end setSnippets
 
+
+    //function that creates the custom dialog by receiving the needed message
     private void createDialog(String message){
         final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.alert_dialog);
@@ -410,7 +426,7 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
     }//end of createDialog
 
-
+    //function that adds the UTMs that have been added to the url, by iterating through the arrayList of all UTMs
     private String getUTMs(){
 
         String url = longURL.getText().toString();
@@ -436,4 +452,4 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     } //end getUTMs
 
 
-}
+} //end CreateAliasFrag

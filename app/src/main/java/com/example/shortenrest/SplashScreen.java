@@ -33,7 +33,7 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isFirstRun) {
-                    //show start activity
+                    //this is to display settings page when first time installing the app
 
                     isFirstTime = true;
                     startActivity(new Intent(SplashScreen.this, SettingsActivity.class));
@@ -56,7 +56,7 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
 
                 if (isFirstRun) {
-                    //show start activity
+                    //this is to display settings page when first time installing the app
                     isFirstTime = true;
                     startActivity(new Intent(SplashScreen.this, SettingsActivity.class));
                     Toast.makeText(SplashScreen.this, "First Run", Toast.LENGTH_LONG)

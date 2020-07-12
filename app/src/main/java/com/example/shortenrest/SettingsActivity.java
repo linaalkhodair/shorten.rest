@@ -82,6 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     } //end onCreate
 
+    //function that  validats the entered fields
     public boolean validate(){
 
         String apiKey = api.getText().toString();
@@ -140,24 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
     }//end of onSupportNavigateUp
 
 
-    public void isFirstTime() {
-
-        //Check if app is opened for the first time, so  we only show enter api .. on first time:
-        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
-        if(pref.getBoolean("activity_executed", false)){
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            SharedPreferences.Editor ed = pref.edit();
-            ed.putBoolean("activity_executed", true);
-            domain.setVisibility(View.INVISIBLE);
-            domainSet.setText(credentials.getDomain());
-            ed.commit();
-        }
-    }
-
-
+    //function that creates the custom dialog by receiving the needed message
     private void createDialog(String message){
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.alert_dialog);
