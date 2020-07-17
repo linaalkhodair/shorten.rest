@@ -2,6 +2,8 @@ package com.example.shortenrest;
 
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -64,6 +66,8 @@ public class EditAliasFrag extends Fragment {
     TextView domainTV, destTV, addUtm;
     boolean isUtm;
     int numOfUtm; //stores the number of originalUtms
+    ImageView copyIcon;
+
 
     Spinner spinner;
     String snippetID;
@@ -130,6 +134,18 @@ public class EditAliasFrag extends Fragment {
         domainTV = view.findViewById(R.id.domainTextView);
         destTV = view.findViewById(R.id.destTextView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
+        copyIcon = view.findViewById(R.id.copyIcon);
+
+        copyIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("shortUrl", shortURL.getText().toString());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(mContext, "URL has been copied to clipboard.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         addSnippet = view.findViewById(R.id.addSnippet);
         //creating dropdown menu
