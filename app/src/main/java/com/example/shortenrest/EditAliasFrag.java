@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -33,19 +33,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -53,51 +48,50 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class EditAliasFrag extends Fragment {
 
-    EditText destURL;
-    EditText domainEdit;
-    EditText shortURL;
-    Button searchBtn;
-    Button saveBtn;
-    TextView domainTV, destTV, addUtm;
-    boolean isUtm;
-    int numOfUtm; //stores the number of originalUtms
-    ImageView copyIcon;
+    private EditText destURL;
+    private EditText domainEdit;
+    private EditText shortURL;
+    private Button searchBtn;
+    private Button saveBtn;
+    private TextView domainTV, destTV, addUtm;
+    private boolean isUtm;
+    private int numOfUtm; //stores the number of originalUtms
+    private ImageView copyIcon;
 
 
-    Spinner spinner;
-    String snippetID;
-    ImageView addSnippet;
-    boolean isSnippet;
-    SnippetList snippetList;
-    boolean hasPreviousSnippet;
+    private Spinner spinner;
+    private String snippetID;
+    private ImageView addSnippet;
+    private boolean isSnippet;
+    private SnippetList snippetList;
+    private boolean hasPreviousSnippet;
 
-    Credentials credentials = new Credentials();
-    String domain = credentials.getDomain();
-    String apiKey = credentials.getAPI_KEY();
-    RelativeLayout relativeLayout;
+    private RelativeLayout relativeLayout;
 
-    Button okBtn;
-    static String cleanUrl;
-    TextView dialogMsg;
+    private Button okBtn;
+    private static String cleanUrl;
+    private TextView dialogMsg;
     private Context mContext;
-    String plainUrl;
+    private String plainUrl;
 
-    ArrayList<ItemCard> arrayList;
+    private ArrayList<ItemCard> arrayList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     //Snippet recycler:
-    ArrayList<SnippetCard> snippetArrayList;
+    private ArrayList<SnippetCard> snippetArrayList;
     private RecyclerView snippetRecyclerView;
     private RecyclerView.Adapter snippetAdapter;
     private RecyclerView.LayoutManager snippetLayoutManager;
 
+    private String apiKey;
+    private String domain;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -135,6 +129,12 @@ public class EditAliasFrag extends Fragment {
         destTV = view.findViewById(R.id.destTextView);
         relativeLayout = view.findViewById(R.id.relativeLayout);
         copyIcon = view.findViewById(R.id.copyIcon);
+
+        SharedPreferences prefs = mContext.getSharedPreferences("Credentials", MODE_PRIVATE);
+        apiKey = prefs.getString("apiKey", "NA");
+        domain = prefs.getString("domain", "short.fyi");
+
+
 
         copyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,7 +197,6 @@ public class EditAliasFrag extends Fragment {
                 if(isValid(destUrl)){
                     //editShortURL(aliasName, destUrl);
                     editShortURL(aliasName, cleanUrl);
-                    Toast.makeText(mContext, "Short URL has been updated successfully", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -360,12 +359,16 @@ public class EditAliasFrag extends Fragment {
     //function that makes a request to the API by sending the alias name, in order to get the destination url, domain, snippets, utms everything.
     private void getAlias(String aliasName){
 
-        String apiKey = credentials.getAPI_KEY();
+        Log.d("HERE----", "dom/"+domain);
+        String url = "https://api.shorten.rest/aliases?domainName="+domain+"?aliasName="+aliasName;
+        if (domain.equals("short.fyi")){
+            url = "https://api.shorten.rest/aliases?aliasName="+aliasName;
+        }
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
         Request request = new Request.Builder()
-                .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
+                .url(url)
                 .method("GET",null)
                 .addHeader("x-api-key", apiKey)
                 .addHeader("Content-Type", "application/json")
@@ -379,35 +382,40 @@ public class EditAliasFrag extends Fragment {
             Log.d("json","json:"+json);
             JSONObject jsonObj = new JSONObject(json);
 
-                //displaying domain
-                String domainName = jsonObj.getString("domainName");
-                domainEdit.setVisibility(View.VISIBLE);
-                domainTV.setVisibility(View.VISIBLE);
-                domainEdit.setText(domainName);
+                if (response.code() == 200) {
+                    //displaying domain
+                    String domainName = jsonObj.getString("domainName");
+                    domainEdit.setVisibility(View.VISIBLE);
+                    domainTV.setVisibility(View.VISIBLE);
+                    domainEdit.setText(domainName);
 
-                //displaying destination
-                int length = jsonObj.getJSONArray("destinations").length(); //come back...
-                Log.d("herehh", "len:" + length);
+                    //displaying destination
+                    int length = jsonObj.getJSONArray("destinations").length(); //come back...
+                    Log.d("herehh", "len:" + length);
 
-                JSONObject object = jsonObj.getJSONArray("destinations").getJSONObject(0);
-                String destinatonUrl = object.getString("url");
+                    JSONObject object = jsonObj.getJSONArray("destinations").getJSONObject(0);
+                    String destinatonUrl = object.getString("url");
 
-                cleanUrl = destinatonUrl;
-                getUtm(destinatonUrl);
+                    cleanUrl = destinatonUrl;
+                    getUtm(destinatonUrl);
 
-                Log.d("tesssst", "url:" + destinatonUrl);
+                    Log.d("tesssst", "url:" + destinatonUrl);
 
 
-                 destTV.setVisibility(View.VISIBLE);
-                 destURL.setVisibility(View.VISIBLE);
-                 destURL.setText(destinatonUrl);
-                 saveBtn.setVisibility(View.VISIBLE);
+                    destTV.setVisibility(View.VISIBLE);
+                    destURL.setVisibility(View.VISIBLE);
+                    destURL.setText(destinatonUrl);
+                    saveBtn.setVisibility(View.VISIBLE);
 
-                //displaying snippets:
+                    //displaying snippets:
                     JSONArray array = jsonObj.getJSONArray("snippets");
                     getSnippet(array);
 
                     relativeLayout.setVisibility(View.VISIBLE);
+                } else {
+                    createDialog(jsonObj.getString("errorMessage")+", please try again.");
+
+                }
 
 
         } catch (IOException e) {
@@ -424,7 +432,7 @@ public class EditAliasFrag extends Fragment {
 
     } //end getAlias
 
-    //fucntion that create a map, key value pairs from the url to retrieve the UTMS embedded, by using '&' to filter through
+    //function that create a map, key value pairs from the url to retrieve the UTMS embedded, by using '&' to filter through
     private static Map<String, String> getQueryMap(String query) {
         String[] params = query.split("&");
         Map<String, String> map = new HashMap<>();
@@ -536,11 +544,15 @@ public class EditAliasFrag extends Fragment {
     //function that makes a request to the API to update (edit) the short url, by updating  either snippets, utms, or destination url
     private void editShortURL(String aliasName, String destUrl){
 
-        String apiKey = credentials.getAPI_KEY();
 
         RequestBody body;
         MediaType mediaType = MediaType.parse("application/json");
         String  utmUrl = addUtm(); //to see if there are any new utms added and get the updated url accordingly
+
+        String url = "https://api.shorten.rest/aliases?domainName="+domain+"?aliasName="+aliasName;
+        if (domain.equals("short.fyi")){
+            url = "https://api.shorten.rest/aliases?aliasName="+aliasName;
+        }
 
         if (isUtm){
 
@@ -559,16 +571,25 @@ public class EditAliasFrag extends Fragment {
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
-                .url("https://api.shorten.rest/aliases?aliasName="+aliasName)
+                .url(url)
                 .method("PUT", body)
                 .addHeader("x-api-key", apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();
         try (Response response = client.newCall(request).execute()) {
 
+            JSONObject jsonObj = new JSONObject(response.body().string());
             Log.d("TEST101","response is :"+response);
 
+            if (response.code() == 200){
+                Toast.makeText(mContext, "Short URL has been updated successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                createDialog(jsonObj.getString("errorMessage")+", please try again.");
+            }
+
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

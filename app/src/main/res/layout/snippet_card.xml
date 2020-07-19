@@ -42,7 +42,7 @@
             android:ems="10"
             android:hint="Snippet"
             android:padding="@dimen/padd_10"
-            android:textSize="15sp"
+            android:textSize="17sp"
             />
 
         <ImageView

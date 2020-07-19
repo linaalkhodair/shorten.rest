@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -29,7 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,39 +47,39 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    EditText longURL;
-    EditText shortURL;
-    Button shortenBtn;
-    ImageView copyIcon;
-    Spinner spinner;
-    String snippetID;
+    private EditText longURL;
+    private EditText shortURL;
+    private Button shortenBtn;
+    private ImageView copyIcon;
+    private Spinner spinner;
+    private String snippetID;
 
-    Button okBtn;
-    TextView dialogMsg, addUtm;
+    private Button okBtn;
+    private TextView dialogMsg, addUtm;
 
-    ImageView addSnippet, addIcon, removeIcon;
+    private ImageView addSnippet, addIcon, removeIcon;
 
-    RelativeLayout relativeLayout;
+    private RelativeLayout relativeLayout;
 
-    boolean isSnippet;
-    boolean isUtm;
+    private boolean isSnippet;
+    private boolean isUtm;
 
     private Context mContext;
-    private Credentials credentials;
 
-    SnippetList snippetList;
+    private SnippetList snippetList;
 
-    ArrayList<ItemCard> arrayList;
+    private ArrayList<ItemCard> arrayList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     //Snippet recycler:
-    ArrayList<SnippetCard> snippetArrayList;
+    private ArrayList<SnippetCard> snippetArrayList;
     private RecyclerView snippetRecyclerView;
     private RecyclerView.Adapter snippetAdapter;
     private RecyclerView.LayoutManager snippetLayoutManager;
@@ -116,8 +116,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         } //network request purposes
-
-        credentials = new Credentials();
 
         longURL = view.findViewById(R.id.longURL);
         shortURL = view.findViewById(R.id.shortURL);
@@ -169,7 +167,6 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
             if (isValid()) {
 
                 createAlias();
-                Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -325,7 +322,16 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
     //if snippets have been added, it will check to add them to the destinations in the request
     private void createAlias() {
 
-        String apiKey = credentials.getAPI_KEY();
+        SharedPreferences prefs = mContext.getSharedPreferences("Credentials", MODE_PRIVATE);
+        String api = prefs.getString("apiKey", "NA");
+
+        String domain = prefs.getString("domain", "short.fyi");
+        Log.d("HERE----", "dom/"+domain);
+        String url = "https://api.shorten.rest/aliases?domainName="+domain+"?aliasName=/@rnd";
+        if (domain.equals("short.fyi")){
+            url = "https://api.shorten.rest/aliases?aliasName=/@rnd";
+        }
+
         String destinationUrl = longURL.getText().toString();
         String utmUrl = getUTMs();
         MediaType mediaType = MediaType.parse("application/json");
@@ -348,9 +354,9 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
-                .url("https://api.shorten.rest/aliases?aliasName=/@rnd") //add domain.. etc
+                .url(url) //add domain.. etc
                 .method("POST", body)
-                .addHeader("x-api-key", apiKey) //later change take api from class
+                .addHeader("x-api-key", api) //later change take api from class ///
                 .addHeader("Content-Type", "application/json")
                 .build();
         try {
@@ -359,11 +365,18 @@ public class CreateAliasFrag extends Fragment implements AdapterView.OnItemSelec
 
             Log.d("json","json:"+json);
             Log.d("HERE!","response is :"+response);
-
             JSONObject jsonObj = new JSONObject(json);
-            String shortened = jsonObj.getString("shortUrl");
-            Log.d("shorturl","="+shortened);
-            shortURL.setText(shortened);
+
+            if (response.code() == 200) {
+
+                String shortened = jsonObj.getString("shortUrl");
+                Log.d("shorturl", "=" + shortened);
+                shortURL.setText(shortened);
+                Toast.makeText(mContext, "Short URL has been created successfully", Toast.LENGTH_SHORT).show();
+            } else {
+
+                createDialog(jsonObj.getString("errorMessage")+", please try again.");
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
