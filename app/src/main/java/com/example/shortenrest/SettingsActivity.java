@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -27,8 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     Button okBtn;
     TextView dialogMsg, domainSet;
-
-    final Credentials credentials = new Credentials();
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (!SplashScreen.isFirstTime) {
 
-            api.setText(credentials.getAPI_KEY());
-            domain.setText(credentials.getDomain());
+            SharedPreferences prefs = getSharedPreferences("Credentials", MODE_PRIVATE);
+            String apiKeyPref = prefs.getString("apiKey", "NA");
+            String domainPref = prefs.getString("domain", "short.fyi");
+
+            api.setText(apiKeyPref);
+            domain.setText(domainPref);
 
             //no back button when its the first run
             Toolbar toolbar=findViewById(R.id.settings_toolbar);
@@ -61,11 +63,17 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (validate()) {
-                    credentials.setAPI_KEY(api.getText().toString());
+                    String apiKey = api.getText().toString();
+                    editor = getSharedPreferences("Credentials", MODE_PRIVATE).edit().putString("apiKey", apiKey);
+                    editor.apply();
+
                     if (domain.getText().toString().isEmpty()) {
-                        credentials.setDomain("short.fyi");
+                        editor = getSharedPreferences("Credentials", MODE_PRIVATE).edit().putString("domain", "short.fyi");
+
                     }else {
-                        credentials.setDomain(domain.getText().toString());
+                        String domainIn = domain.getText().toString();
+                        editor = getSharedPreferences("Credentials", MODE_PRIVATE).edit().putString("domain", domainIn);
+
                     }
                     Toast.makeText(getApplicationContext(), "Settings has been saved successfully.", Toast.LENGTH_LONG).show();
                 }

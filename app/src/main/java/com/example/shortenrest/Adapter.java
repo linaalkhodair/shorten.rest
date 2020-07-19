@@ -1,7 +1,6 @@
 package com.example.shortenrest;
 
-import android.content.Context;
-import android.os.Bundle;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -23,10 +21,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
     private ArrayList<ItemCard>  mArrayList;
 
-
-    public ArrayList<ItemCard> getmArrayList() {
-        return mArrayList;
-    }
 
     public static class AdapterViewHolder extends RecyclerView.ViewHolder {
 
@@ -133,9 +127,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
         notifyItemRangeChanged(position, mArrayList.size());
     }
 
-    public ArrayList<ItemCard> getArrayList(){
-        return mArrayList;
-    }
 
 }
 

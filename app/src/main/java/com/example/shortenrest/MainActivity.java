@@ -7,18 +7,14 @@ import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.shortenrest.ui.main.SectionsPagerAdapter;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 

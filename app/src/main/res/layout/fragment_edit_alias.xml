@@ -45,7 +45,7 @@
                 android:hint="Enter short URL"
                 android:padding="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
@@ -110,7 +110,7 @@
                 android:hint=""
                 android:padding="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -145,7 +145,7 @@
                 android:hint=""
                 android:padding="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

@@ -89,7 +89,7 @@
                 android:hint="Enter API Key"
                 android:padding="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -126,7 +126,7 @@
                 android:hint="Enter domain"
                 android:padding="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView

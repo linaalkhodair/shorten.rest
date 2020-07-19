@@ -2,17 +2,12 @@ package com.example.shortenrest;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import java.util.Set;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -37,8 +32,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     isFirstTime = true;
                     startActivity(new Intent(SplashScreen.this, SettingsActivity.class));
-                   // Toast.makeText(SplashScreen.this, "First Run", Toast.LENGTH_LONG)
-                     //       .show();
+
                     getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
                             .putBoolean("isFirstRun", false).commit();
                 } else {
@@ -59,8 +53,6 @@ public class SplashScreen extends AppCompatActivity {
                     //this is to display settings page when first time installing the app
                     isFirstTime = true;
                     startActivity(new Intent(SplashScreen.this, SettingsActivity.class));
-                   // Toast.makeText(SplashScreen.this, "First Run", Toast.LENGTH_LONG)
-                   //         .show();
                     finish();
                     getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
                             .putBoolean("isFirstRun", false).commit();
